@@ -90,6 +90,8 @@ pools = client.get_agent_pools()
 
 ### Site Management
 
+All site operations accept either a site ID or site name. Site names are resolved automatically (case-insensitive).
+
 ```python
 from burpsuite_sdk import ScopeProtocolOptions
 
@@ -102,24 +104,25 @@ site = client.create_site(
     protocol_options=ScopeProtocolOptions.USE_SPECIFIED_PROTOCOLS
 )
 
-# Get site details
+# Get site details - by ID or name
 site = client.get_site(site_id="site-id")
+site = client.get_site(site_id="My Application")  # Also works!
 
-# Update site scope
+# Update site scope - by ID or name
 client.update_site_scope(
-    site_id="site-id",
+    site_id="My Application",
     start_urls=["https://example.com"],
     in_scope_url_prefixes=["https://example.com/"]
 )
 
 # Rename a site
-client.rename_site(site_id="site-id", name="New Name")
+client.rename_site(site_id="My Application", name="New Name")
 
 # Move a site to a folder
-client.move_site(site_id="site-id", parent_id="folder-id")
+client.move_site(site_id="New Name", parent_id="folder-id")
 
 # Delete a site
-client.delete_site(site_id="site-id")
+client.delete_site(site_id="New Name")
 ```
 
 ### Folder Management
@@ -194,9 +197,9 @@ schedules = client.get_schedule_items(
 # Get a specific schedule
 schedule = client.get_schedule_item(schedule_id="schedule-id")
 
-# Create a scheduled scan
+# Create a scheduled scan - use site IDs or site names
 schedule = client.create_schedule_item(
-    site_ids=["site-id"],
+    site_ids=["My Application"],  # Site names work!
     initial_run_time="2024-01-15T10:00:00Z",
     rrule="FREQ=WEEKLY;INTERVAL=1;BYDAY=MO",
     name="Weekly Security Scan"
@@ -211,11 +214,21 @@ client.delete_schedule_item(schedule_id="schedule-id")
 ```python
 from burpsuite_sdk import Severity, Confidence, Novelty, PropagationMode
 
-# Get issues from a scan
+# Get ALL issues for a site (uses REST API) - by ID or name
+issues = client.get_site_issues(site_id="My Application")
+
+# Get issues from a specific scan (paginated, default 100)
 issues = client.get_scan_issues(
     scan_id="scan-id",
+    count=200,
     severities=[Severity.HIGH, Severity.MEDIUM],
     confidences=[Confidence.CERTAIN, Confidence.FIRM]
+)
+
+# Get ALL issues from a scan (automatically handles pagination)
+all_issues = client.get_all_scan_issues(
+    scan_id="scan-id",
+    severities=[Severity.HIGH, Severity.MEDIUM]
 )
 
 # Get detailed issue information

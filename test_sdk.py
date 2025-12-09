@@ -130,6 +130,7 @@ class SDKTester:
             self.test_site_operations()
             self.test_folder_operations()
             self.test_scan_operations()
+            self.test_issue_operations()
             self.test_schedule_operations()
             self.test_scan_configuration_operations()
             self.test_tag_operations()
@@ -324,6 +325,35 @@ class SDKTester:
         self.run_test("get_scans_by_status", test_get_scans_by_status)
         self.run_test("get_scan (if scans exist)", test_get_scan)
         self.run_test("get_scan_report (if completed scans exist)", test_get_scan_report)
+    
+    # =========================================================================
+    # ISSUE TESTS
+    # =========================================================================
+    
+    def test_issue_operations(self):
+        """Test issue-related operations."""
+        print("\n🐛 Testing Issue Operations...")
+        
+        def test_get_site_issues():
+            # Get a site to test with
+            tree = self.client.get_site_tree()
+            sites = tree.get("sites", [])
+            if sites:
+                site_id = sites[0]["id"]
+                issues = self.client.get_site_issues(site_id)
+                assert isinstance(issues, list), "Expected list of issues"
+        
+        def test_get_site_issues_by_name():
+            # Test using site name instead of ID
+            tree = self.client.get_site_tree()
+            sites = tree.get("sites", [])
+            if sites:
+                site_name = sites[0]["name"]
+                issues = self.client.get_site_issues(site_name)
+                assert isinstance(issues, list), "Expected list of issues"
+        
+        self.run_test("get_site_issues (if sites exist)", test_get_site_issues)
+        self.run_test("get_site_issues by name (if sites exist)", test_get_site_issues_by_name)
     
     # =========================================================================
     # SCHEDULE TESTS
