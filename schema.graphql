@@ -1,0 +1,5066 @@
+# Burp Suite DAST GraphQL Schema
+# Generated from GraphQL introspection on 2025-12-09
+
+# ==============================================================================
+# SCALARS
+# ==============================================================================
+
+"A 64-bit signed integer"
+scalar Long
+
+"Timestamp scalar"
+scalar Timestamp
+
+# ==============================================================================
+# ENUMS
+# ==============================================================================
+
+enum AgentWarningType {
+  agent_overallocated
+  agent_under_spec
+}
+
+enum ApiAuthenticationTokenDestination {
+  header
+  cookie
+  query
+}
+
+enum ApiAuthenticationType {
+  basic
+  apikey
+  bearer
+  unsupported
+}
+
+enum ApiDynamicAuthenticationTokenRequestMethod {
+  get
+  post
+}
+
+"""
+Indicates the column that you want to use to sort the audit items returned by a query.
+"""
+enum AuditItemSortColumn {
+  "Sorts audit items based on their hostname."
+  host
+  "Sorts audit items based on their URL path."
+  path
+  "Sorts audit items based on the number of requests sent to each audit item during the scan."
+  number_of_requests
+  "Sorts audit items based on the number of errors that occurred during the scan."
+  number_of_errors
+  "Sorts audit items based on their number of identified insertion points."
+  number_of_insertion_points
+}
+
+"""
+Indicates the column that you want to use to sort the bChecks returned by a query.
+"""
+enum BCheckSortColumn {
+  name
+  date_added
+}
+
+"""
+The level of confidence that an identified issue is a genuine vulnerability. This reflects the inherent reliability of the technique that was used to identify the issue.
+"""
+enum Confidence {
+  "The issue is potentially present but there is a high chance that this could be a false positive."
+  tentative
+  "The issue is probably present, but this could be a false positive."
+  firm
+  "The issue is definitely present."
+  certain
+  "After manual inspection, the issue is not really present and will be ignored."
+  false_positive
+}
+
+enum Counter {
+  NO_PERM_TO_VIEW_APP_LOGINS_MODAL_DISPLAYED
+  CREATE_PERM_TO_VIEW_APP_LOGINS
+  RECORDED_LOGIN_REPLAY_BUTTON_PERMITTED
+  DISPLAY_APP_LOGIN_ERROR
+}
+
+"Error state of a new pre-scan check."
+enum CreatePreScanCheckError {
+  "The pre-scan check will not run because scanning is disabled."
+  scanning_disabled
+  "The pre-scan check will not run because there are no authorized scanning machines."
+  no_authorized_scanning_machines
+  "The pre-scan check will not run because the site is in a pool with no scanning machines."
+  empty_scanning_pool
+  "The pre-scan check will not run because the site is in a pool without any enabled scanning machines."
+  no_enabled_machines_in_pool
+}
+
+"Indicates the type of error that occurred during the auditing phase."
+enum ErrorType {
+  "Burp Scanner was unable to resolve the hostname that you provided."
+  unknown_host
+  "The request timed out due to a lack of response."
+  request_timeout
+  "During the auditing phase, the scan was unable to access a location that was previously discovered during the crawl phase."
+  blocked_doorway
+  "10 or more consecutive errors occurred."
+  too_many_consecutive
+  "During the auditing phase, the scan was unable to locate an insertion point that was previously identified during the crawl phase."
+  insertion_point_not_found
+  "This URL was excluded from the scan because some kind of streaming content was identified in the response. Otherwise, the scan would be stuck indefinitely scanning the streaming content."
+  streaming_response
+  "The Burp Browser crashed during the scan."
+  browser_crash
+  replayer_error
+  "An unknown error occurred."
+  unknown
+}
+
+enum FeedbackRatingType {
+  scan
+}
+
+enum ForwardPropagationMode {
+  "Only the selected issue will be marked or unmarked as a false positive."
+  none
+  "The selected issue will be marked or unmarked as a false positive, along with all other issues of the same type across the whole site."
+  issue_type_only
+  "The selected issue will be marked or unmarked as a false positive, along with all other issues of the same type found at the same URL."
+  issue_type_and_url
+}
+
+"Indicates the method in which the scan was initiated."
+enum GeneratedBy {
+  "The scan was started immediately on the Burp Suite DAST web UI by a user."
+  web_interface
+  "The scan was generated using the REST API."
+  rest_api
+  "The scan was started immediately using the GraphQL API."
+  graphql_api
+  "This is a CI-driven scan."
+  external
+  "The scan was started as part of a schedule."
+  scheduled
+}
+
+"The state of the GitLab issue."
+enum GitLabIssueState {
+  opened
+  closed
+}
+
+"A GitLab issue type."
+enum GitLabIssueType {
+  issue
+  incident
+}
+
+"A GitLab state type."
+enum GitLabStateType {
+  opened
+  closed
+}
+
+"""
+Indicates the issue's relationship to the results of the previous scan. This data is used to track how your security posture is changing over time.
+"""
+enum Novelty {
+  "This issue was also found by the previous scan."
+  repeated
+  "This issue was not found by the previous scan."
+  new
+  "This issue was found by an earlier scan, was not found by the previous scan, but has now reappeared in the most recent scan."
+  regression
+  "This issue was found the first time that this site was scanned."
+  first
+}
+
+enum PlatformAuthenticationType {
+  basic
+  ntlm_v1
+  ntlm_v2
+}
+
+"The current status of a pre-scan check."
+enum PreScanCheckStatus {
+  "The pre-scan check is due to start but there are currently no available agents to perform the check. It will start as soon as an agent becomes available."
+  queued
+  "The pre-scan check is currently in progress."
+  running
+  "The pre-scan check has finished successfully."
+  succeeded
+  "The pre-scan check was cancelled by a user before it finished."
+  cancelled
+  "The pre-scan check was unable to start or was unable to finish due to errors."
+  failed
+}
+
+"Determines whether to also mark or unmark other issues as false positives."
+enum PropagationMode {
+  "Only the selected issue will be marked or unmarked as a false positive."
+  none
+  "The selected issue will be marked or unmarked as a false positive, along with all other issues of the same type across the whole site."
+  issue_type_only
+  "The selected issue will be marked or unmarked as a false positive, along with all other issues of the same type found at the same URL."
+  issue_type_and_url
+  "The selected issue will be marked or unmarked as a false positive, along with all other issues of the same type in the current scan only. Other scans for this site will not be affected."
+  issue_type_and_current_scan
+}
+
+enum ProxyAuthenticationType {
+  none
+  basic
+  ntlm_v1
+  ntlm_v2
+}
+
+enum ScanEventLogType {
+  critical
+  error
+  information
+  debug
+}
+
+enum ScanPhase {
+  crawling
+  auditing
+}
+
+"""
+Indicates whether the scan report should be a fully detailed report or just a brief summary.
+"""
+enum ScanReportType {
+  "The complete scan report, providing the maximum amount of detail."
+  detailed
+  "A brief summary of the scan report, providing an overview of key information."
+  summary
+}
+
+"The current status of a scan."
+enum ScanStatus {
+  "The scan is due to start but there are currently no available agents to perform the scan. It will start as soon as an agent becomes available."
+  queued
+  "The scan is currently in progress."
+  running
+  "The scan has finished successfully."
+  succeeded
+  "The scan was cancelled by a user before it finished."
+  cancelled
+  "The scan was unable to start or was unable to finish due to errors."
+  failed
+  "The scan has been paused and can be resumed later."
+  paused
+}
+
+"The type of a scan target."
+enum ScanTargetType {
+  "The scan target refers to a Site."
+  site
+  "The scan target refers to a CIDS site."
+  cids_site
+}
+
+"Indicates the column that you want to use to sort the scans returned by a query."
+enum ScansSortColumn {
+  "Sorts scans based on the time at which the scan started or is due to start."
+  start
+  "Sorts scans based on the time at which the scan ended."
+  end
+  "Sorts scans based on their current status."
+  status
+  "Sorts scans based on the site that they scanned."
+  site
+  "Sorts scans based on their ID."
+  id
+}
+
+"Options to determine which protocols are used when scanning your site's URLs."
+enum ScopeProtocolOptions {
+  "Each URL is scanned using the protocols that you explicitly specified. For example, if you entered https://example.com but didn't enter http://example.com, then this URL would only be scanned using HTTPS. If you do not explicitly specify a protocol, then both HTTP and HTTPS will be used by default."
+  USE_SPECIFIED_PROTOCOLS
+  "Each URL is scanned using both HTTP and HTTPS, regardless of how they were entered."
+  USE_HTTP_AND_HTTPS
+}
+
+"""
+The level of severity for an issue that was found by a scan. The higher the severity level, the larger the impact is likely to be if an attacker is able to exploit this vulnerability. Note that the severity level is only a rough approximation based on a typical website. You should use your knowledge of the purpose and context of the associated functionality to determine how serious each issue is in your individual case.
+"""
+enum Severity {
+  "This issue is only included for informational purposes."
+  info
+  "Attacks that exploit this vulnerability typically have a low impact."
+  low
+  "Attacks that exploit this vulnerability typically have a medium impact."
+  medium
+  "Attacks that exploit this vulnerability typically have a high impact."
+  high
+}
+
+"""
+Determines which column is used to sort the schedule items that are returned by the query.
+"""
+enum SortBy {
+  "Sorts schedule items based on the time at which the scan is due to start."
+  start
+  "Sorts schedule items based on the site that they will scan."
+  site
+}
+
+"""
+Determines whether the sorted column is displayed in ascending or descending order.
+"""
+enum SortOrder {
+  "Sorts the column in ascending order."
+  asc
+  "Sorts the column in descending order."
+  desc
+}
+
+enum SystemWarningType {
+  metered_billing
+  enterprise_server_under_spec
+  web_server_under_spec
+  agent_problem
+}
+
+"Available colors for tags."
+enum TagColor {
+  DARK_BLUE
+  LIGHT_BLUE
+  NAVY
+  PURPLE
+  MAGENTA
+  DARK_GREEN
+  LIGHT_GREEN
+  ORANGE
+  LIGHT_ORANGE
+  YELLOW
+}
+
+# ==============================================================================
+# INTERFACES
+# ==============================================================================
+
+"""
+A virtual or physical machine that you have configured for use as an agent machine in Burp Suite DAST. Agent machines are the machines on which your scans run. All new agent machines must be authorized before they can communicate with the DAST server and run scans.
+"""
+interface AgentMachine {
+  "The unique identifier of the machine that you have configured for use as an agent machine."
+  machine_id: ID
+  "The IP address of the machine that is configured for use as an agent machine."
+  ip: String
+}
+
+# ==============================================================================
+# UNIONS
+# ==============================================================================
+
+"An API authentication scheme (for example: Basic, Bearer Token, API Key)."
+union ApiAuthentication = ApiBasicAuthentication | ApiKeyAuthentication | ApiBearerTokenAuthentication | ApiUnsupportedAuthentication
+
+"""
+An API authentication scheme credentials, parsed from an API definition file (for example: Basic, Bearer Token, API Key).
+"""
+union ApiAuthenticationCredentials = ApiBasicAuthenticationCredentials | ApiKeyAuthenticationCredentials | ApiBearerTokenAuthenticationCredentials
+
+"""
+An API authentication scheme parsed from an API definition file (for example: Basic, Bearer Token, API Key).
+"""
+union ApiAuthenticationWithoutCredentials = ApiBasicAuthenticationWithoutCredentials | ApiKeyAuthenticationWithoutCredentials | ApiBearerTokenAuthenticationWithoutCredentials | ApiUnsupportedAuthenticationWithoutCredentials
+
+"""
+Evidence that the scan found for the issue, such as the HTTP request and response that can be exploited.
+"""
+union Evidence = Request | Response | HttpInteraction | DescriptiveEvidence
+
+"The possible ways to change an issue."
+union IssueChange = SeverityIssueChange | FalsePositiveIssueChange | AcceptedRiskIssueChange
+
+union ParsedApiDefinition = ParsedOpenApiDefinition | ParsedSoapDefinition | ParsedPostmanCollection
+
+"""
+Part of an HTTP request or response that has been identified by Burp Scanner as containing evidence that an issue is present.
+"""
+union RequestResponseSegment = DataSegment | HighlightSegment | SnipSegment
+
+union ScannedItem = AuditItem | CrawlItem
+
+# ==============================================================================
+# INPUT TYPES
+# ==============================================================================
+
+input AddScanningMachineAuthenticationTokenInput {
+  "The name for the authentication token. This is the name that is displayed in the Burp Suite DAST web UI."
+  name: String
+}
+
+input AddScanningMachineInput {
+  "The name for the agent machine. This is the name that is displayed in the Burp Suite DAST web UI."
+  name: String
+}
+
+"The input to add tags to nodes in the site tree."
+input AddTagsToNodesInput {
+  "The IDs of the tags to add."
+  tag_ids: [ID!]!
+  "The IDs of the sites or folders to add tags to."
+  node_ids: [ID!]!
+}
+
+"An API authentication scheme."
+input ApiAuthenticationInput {
+  "The Basic authentication scheme."
+  basic_authentication: ApiBasicAuthenticationInput
+  "The API Key authentication scheme."
+  api_key_authentication: ApiKeyAuthenticationInput
+  "The Bearer Token authentication scheme."
+  bearer_token_authentication: ApiBearerTokenAuthenticationInput
+}
+
+"The Basic authentication scheme."
+input ApiBasicAuthenticationInput {
+  "The unique authentication scheme label."
+  label: String!
+  "The Basic authentication scheme username."
+  username: String
+  "The Basic authentication scheme password."
+  password: String
+}
+
+"The Bearer Token authentication scheme."
+input ApiBearerTokenAuthenticationInput {
+  "The unique authentication scheme label."
+  label: String!
+  "The Bearer Token authentication scheme token."
+  token: String
+  "The Bearer Token authentication scheme dynamic token config."
+  dynamic_token_config: ApiDynamicAuthenticationTokenConfigInput
+}
+
+"Specifies the input fields required to set the API definition of a site."
+input ApiDefinitionInput {
+  "The URL that hosts the API definition file."
+  url_based_api_definition: UrlBasedApiDefinitionInput
+  "The file that contains the API definitions."
+  file_based_api_definition: FileBasedApiDefinitionInput
+}
+
+"The API dynamic authentication token config."
+input ApiDynamicAuthenticationTokenConfigInput {
+  "The authentication service URL."
+  request_url: String!
+  "The request method."
+  request_method: ApiDynamicAuthenticationTokenRequestMethod!
+  "The request headers."
+  request_headers: [ApiDynamicAuthenticationTokenRequestHeaderInput!]
+  "The request body."
+  request_body: String
+  "The path to identify the token in the response. For JSON responses this is a dot-separated path. For XML responses this is an XPath expression."
+  extract_path: String!
+  "The refresh interval in seconds."
+  refresh_interval_seconds: Long!
+}
+
+"A dynamic authentication token request header."
+input ApiDynamicAuthenticationTokenRequestHeaderInput {
+  "The header name."
+  name: String!
+  "The header value."
+  value: String!
+}
+
+"An API endpoint"
+input ApiEndpointInput {
+  "The ID of the API endpoint"
+  id: ID!
+}
+
+"The API Key authentication scheme."
+input ApiKeyAuthenticationInput {
+  "The unique authentication scheme label."
+  label: String!
+  "The API Key authentication scheme destination (for example: header, query, cookie)."
+  api_key_destination: ApiAuthenticationTokenDestination!
+  "The API Key authentication scheme parameter name (for example: API_KEY_NAME, apiKeyName)."
+  parameter_name: String!
+  "The API Key authentication scheme key."
+  key: String
+  "The dynamic token config."
+  dynamic_token_config: ApiDynamicAuthenticationTokenConfigInput
+}
+
+"Any unsupported authentication scheme."
+input ApiUnsupportedAuthenticationInput {
+  "The unique authentication scheme label."
+  label: String!
+  "The unsupported authentication type."
+  authentication_type: String!
+}
+
+"""
+Specifies the input fields required to create a new application login. These can either be basic sets of login credentials or scripts of full login sequences that you recorded with the Burp Suite Navigation Recorder browser extension. These are used by scans to crawl areas of the site that are only accessible to registered users.
+"""
+input ApplicationLoginInput {
+  login_credentials: [LoginCredentialInput!]
+  recorded_logins: [RecordedLoginInput!]
+}
+
+"Specifies the input fields required to assign a site to an agent pool."
+input AssignSitesToAgentPoolInput {
+  "The list of unique identifiers of the sites."
+  site_ids: [ID!]
+  "The unique identifier of the pool you wish to use to scan the site."
+  agent_pool_id: ID!
+}
+
+"""
+Specifies the input fields required to configure authentication status checking. This allows scans to verify whether a user remains authenticated during crawling by checking a specific URL for expected content.
+"""
+input AuthenticationStatusCheckInput {
+  "The URL to check for authentication status."
+  url: String!
+  "The confirmation text used to verify authentication status."
+  confirmationText: String!
+}
+
+"""
+Specifies the input fields required to authorize a new agent machine to communicate with the DAST server and run scans.
+"""
+input AuthorizeAgentInput {
+  "The unique identifier of the agent machine that you want to authorize."
+  machine_id: ID!
+  "The identifier of the agent pool to assign the machine to."
+  agent_pool_id: ID
+}
+
+input AutomaticGitLabSettingsInput {
+  project_link: GitLabProjectLinkInput!
+  min_severity: Severity!
+  min_confidence: Confidence!
+}
+
+input AutomaticTrelloSettingsInput {
+  board_link: TrelloBoardLinkInput!
+  min_severity: Severity!
+  min_confidence: Confidence!
+}
+
+"Specifies the input fields required to cancel a running or scheduled scan."
+input CancelScanInput {
+  "The unique identifier of the scan that you want to cancel."
+  id: ID!
+}
+
+input CheckApiDefinitionUrlHeader {
+  name: String!
+  value: String!
+}
+
+"Specifies the input fields required to create a new agent pool."
+input CreateAgentPoolInput {
+  "The name for the new agent pool. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String!
+  "An optional description of the agent pool."
+  description: String
+}
+
+"""
+Specifies the input fields required to create a new recipient of scan completion reports for a given folder.
+"""
+input CreateFolderEmailRecipientInput {
+  "The unique identifier for the folder for which you want to add a new recipient of scan completion reports."
+  folder_id: ID!
+  "The email address that you want to send scan completion reports to."
+  email_recipient: EmailRecipientInput!
+}
+
+"Specifies the input fields required to create a new folder in the site tree."
+input CreateFolderInput {
+  "The unique identifier of the folder to which you want to add the new folder as a child. To add the folder to the root level, enter 0."
+  parent_id: ID!
+  "The name for the new folder. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String!
+  "The description for the new folder."
+  description: String
+  "A list of IDs for scan configurations that you want to use for scans of the sites in this folder or its subfolders."
+  scan_configuration_ids: [ID!]
+  "A list of extension IDs for extensions that you want to use for scans of sites in this folder or its subfolders."
+  extension_ids: [ID!]
+  "A list of BCheck IDs for BChecks that you want to use for scans of sites in this folder or its subfolders."
+  bcheck_ids: [ID!]
+  "A list of all the email addresses that receive scan reports whenever scans of sites in this folder finish."
+  email_recipients: [EmailRecipientInput!]
+  "The information about Slack notifications for the sites in this folder."
+  folder_slack_channels: SlackChannelsInput
+  "Various settings that will influence settings on this site"
+  settings: CreateFolderSettingsInput
+}
+
+input CreateFolderPlatformAuthenticationInput {
+  folder_id: ID!
+  platform_authentication: PlatformAuthenticationInput!
+}
+
+"""
+Specifies the input fields required to configure a proxy for a given folder in the folder tree.
+"""
+input CreateFolderProxyInput {
+  folder_id: ID!
+  proxy: ProxyInput!
+}
+
+input CreateFolderRequestCookieInput {
+  folder_id: ID!
+  request_cookie: RequestCookieInput!
+}
+
+input CreateFolderRequestHeaderInput {
+  folder_id: ID!
+  request_header: RequestHeaderInput!
+}
+
+"Specifies the input fields required to set the settings of a folder."
+input CreateFolderSettingsInput {
+  request_headers: [RequestHeaderInput!]
+  request_cookies: [RequestCookieInput!]
+  platform_authentication: [PlatformAuthenticationInput!]
+  proxies: [ProxyInput!]
+}
+
+"Create a new GitLab issue."
+input CreateGitLabIssueInput {
+  scan_id: ID!
+  serial_number: String!
+  project_id: ID!
+  issue_type: GitLabIssueType!
+}
+
+input CreateJiraAutomaticRuleInput {
+  name: String!
+  description: String
+  severities: [Severity!]!
+  confidences: [Confidence!]!
+  site_ids: [ID!]
+  folder_ids: [ID!]
+  project: JiraProjectInput!
+  ticket_type: JiraTicketTypeInput!
+  parent: JiraParentInput
+  backfill_jira_tickets: Boolean
+  custom_fields: [JiraCustomFieldInput!]
+}
+
+input CreateJiraManualRuleInput {
+  name: String!
+  description: String
+  project: JiraProjectInput!
+  ticket_type: JiraTicketTypeInput!
+  parent: JiraParentInput
+  custom_fields: [JiraCustomFieldInput!]
+}
+
+input CreateJiraTicketInput {
+  scan_id: ID!
+  serial_number: String!
+  rule_id: ID!
+}
+
+"Specifies the input fields required to create a new scan configuration."
+input CreateScanConfigurationInput {
+  "The name for the scan configuration. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String!
+  "The new scan configuration in JSON format."
+  scan_configuration_fragment_json: String!
+}
+
+"Specifies the input fields required to create a schedule item."
+input CreateScheduleItemInput {
+  "The list of unique identifiers of the sites for which you want to create a schedule item."
+  site_ids: [ID!]
+  "The list of unique identifiers of the folders for which you want to create a schedule item."
+  folder_ids: [ID!]
+  "The scheduling information for the new schedule item, such as when the scan should run and how often."
+  schedule: ScheduleInput
+  "A list all the scan configurations that you want to use for scans created from this schedule item."
+  scan_configuration_ids: [ID!]
+  "If true, running the schedule item will capture detailed logging."
+  verbose_debug: Boolean
+}
+
+"""
+Specifies the input fields required to create a new recipient of scan completion reports for a given site.
+"""
+input CreateSiteEmailRecipientInput {
+  "The unique identifier of the site for which you want to add a new recipient of scan completion reports."
+  site_id: ID!
+  "The email address to which you want scan completion reports to be sent."
+  email_recipient: EmailRecipientInput!
+}
+
+"Specifies the input fields required to create a new site in the site tree."
+input CreateSiteInput {
+  "The name for the new site. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String!
+  "The unique identifier of the folder to which you want to add the new site as a child. To add the site to the root level, enter 0."
+  parent_id: ID!
+  "The site scope."
+  scope_v2: ScopeV2Input
+  "The API definition."
+  api_definitions: [ApiDefinitionInput!]
+  "A list of IDs for scan configurations that you want to use for scans of this site."
+  scan_configuration_ids: [ID!]
+  "A list of IDs for extensions that you want to use for scans of this site."
+  extension_ids: [ID!]
+  "A list of IDs for BChecks that you want to use for scans of this site."
+  bcheck_ids: [ID!]
+  "All the application logins that you want to use for scans of this site. These can either be basic sets of login credentials or scripts of full login sequences that you recorded with the Burp Suite Navigation Recorder browser extension. These are used by scans to crawl areas of the site that are only accessible to registered users. Note that you can only use one type of application login for each site."
+  application_logins: ApplicationLoginInput
+  "A list of all the email addresses that should receive scan reports whenever scans of this site finish."
+  email_recipients: [EmailRecipientInput!]
+  "The agent pool the site will be in. Assigns the site to the default pool if not specified."
+  agent_pool_id: ID
+  "The information about Slack notifications for this site."
+  slack_channels: SlackChannelsInput
+  "Settings that are applied to the new site."
+  settings: CreateSiteSettingsInput
+  "If you are using a hosted dashboard version of Burp Suite DAST, enable this setting to confirm that you have permission to scan all URLs within your configured scope.
+
+You do not need to do this if you are using a self-hosted version of Burp Suite DAST."
+  confirm_permission_to_scan: Boolean
+}
+
+"""
+Specifies the input fields required to create a new set of login credentials for a site. Note that this does not create a new user account on the actual website. The credentials that you specify here must already be valid for the website that you want to scan.
+"""
+input CreateSiteLoginCredentialInput {
+  "The unique identifier of the site for which you want to add a new set of login credentials."
+  site_id: ID!
+  "The fields used to add a new set of login credentials for a given site."
+  login_credential: LoginCredentialInput!
+}
+
+input CreateSitePlatformAuthenticationInput {
+  site_id: ID!
+  platform_authentication: PlatformAuthenticationInput!
+}
+
+"""
+Specifies the input fields required to configure a proxy for a given site in the site tree.
+"""
+input CreateSiteProxyInput {
+  site_id: ID!
+  proxy: ProxyInput!
+}
+
+"""
+Specifies the input fields required to create a new recorded login sequence for a site.
+"""
+input CreateSiteRecordedLoginInput {
+  "The unique identifier of the site for which you want to add a new recorded login sequence."
+  site_id: ID!
+  "The fields used to add a new recorded login sequence for a given site."
+  recorded_login: RecordedLoginInput!
+}
+
+"Specifies the input fields required to create a request cookie."
+input CreateSiteRequestCookieInput {
+  "The unique identifier of the site you want to attach a request header to."
+  site_id: ID!
+  "The request cookie to create."
+  request_cookie: RequestCookieInput!
+}
+
+"Specifies the input fields required to create a request header."
+input CreateSiteRequestHeaderInput {
+  "The unique identifier of the site you want to attach a request header to."
+  site_id: ID!
+  "The request header to create."
+  request_header: RequestHeaderInput!
+}
+
+"Specifies the input fields required to set the settings of a site."
+input CreateSiteSettingsInput {
+  request_headers: [RequestHeaderInput!]
+  request_cookies: [RequestCookieInput!]
+  platform_authentication: [PlatformAuthenticationInput!]
+  proxies: [ProxyInput!]
+}
+
+"The input to create a new tag."
+input CreateTagInput {
+  "The name of the tag."
+  name: String!
+  "The description of the tag."
+  description: String
+  "The color of the tag."
+  color: TagColor!
+}
+
+"Create a new Trello card."
+input CreateTrelloCardInput {
+  scan_id: ID!
+  serial_number: String!
+  board_id: String!
+  list_id: String!
+}
+
+"""
+Specifies the input fields required to revoke the authorization of an agent machine so that it can no longer communicate with the DAST server and run scans.
+"""
+input DeauthorizeAgentInput {
+  "The unique identifier of the agent machine whose authorization you want to revoke."
+  id: ID!
+}
+
+"Specifies the input fields required to delete an agent pool."
+input DeleteAgentPoolInput {
+  "The unique identifier of the agent pool that you want to delete."
+  id: ID!
+}
+
+"""
+Specifies the input fields required to delete an BCheck from a library and any sites it is added to.
+"""
+input DeleteBCheckInput {
+  "The unique identifier of the BCheck to delete."
+  id: ID!
+}
+
+"Specifies the input fields required to delete a site for a CI-driven scan."
+input DeleteCidsSiteInput {
+  "The unique identifier of the site for a CI-driven scan that you want to delete."
+  id: ID!
+}
+
+"""
+Specifies the input fields required to delete an extension from a library and any sites it is added to.
+"""
+input DeleteExtensionInput {
+  "The unique identifier of the extension to delete."
+  id: ID!
+}
+
+"""
+Specifies the input fields required to delete a recipient of scan completion reports for this folder.
+"""
+input DeleteFolderEmailRecipientInput {
+  "The unique identifier of the recipient that you want to delete."
+  id: ID!
+}
+
+"Specifies the input fields required to delete a folder."
+input DeleteFolderInput {
+  "The unique identifier of the folder that you want to delete."
+  id: ID!
+}
+
+input DeleteFolderPlatformAuthenticationInput {
+  id: ID!
+}
+
+"""
+Specifies the input fields required to remove a proxy from a given folder in the folder tree.
+"""
+input DeleteFolderProxyInput {
+  id: ID!
+}
+
+input DeleteFolderRequestCookieInput {
+  id: ID!
+}
+
+input DeleteFolderRequestHeaderInput {
+  id: ID!
+}
+
+input DeleteJiraAutomaticRuleInput {
+  id: ID!
+}
+
+input DeleteJiraManualRuleInput {
+  id: ID!
+}
+
+"Specifies the input fields required to delete a scan configuration."
+input DeleteScanConfigurationInput {
+  "The unique identifier of the scan configuration that you want to delete."
+  id: ID!
+  "Determines whether the scan configuration will be deleted even if there are warnings, for example, when the scan configuration is currently in use."
+  force: Boolean
+}
+
+"""
+Specifies the input fields required to delete a scan. Note that you cannot delete scans that are currently running. To delete a running scan, you need to cancel it first.
+"""
+input DeleteScanInput {
+  "The unique identifier of the scan that you want to delete."
+  id: ID!
+}
+
+input DeleteScanningMachineAuthenticationTokenInput {
+  "The token hash of the authentication token."
+  token_hash: String!
+}
+
+"Specifies the input fields required to delete a schedule item."
+input DeleteScheduleItemInput {
+  "The unique identifier of the schedule item that you want to delete."
+  id: ID!
+}
+
+"""
+Specifies the input fields required to delete a recipient of scan completion reports.
+"""
+input DeleteSiteEmailRecipientInput {
+  "The unique identifier of the recipient that you want to delete."
+  id: ID!
+}
+
+"Specifies the input fields required to delete a site."
+input DeleteSiteInput {
+  "The unique identifier of the site that you want to delete."
+  id: ID!
+}
+
+"""
+Specifies the input fields required to delete an existing set of login credentials for a site.
+"""
+input DeleteSiteLoginCredentialInput {
+  "The unique identifier for the set of login credentials that you want to delete."
+  id: ID!
+}
+
+input DeleteSitePlatformAuthenticationInput {
+  id: ID!
+}
+
+"""
+Specifies the input fields required to remove a proxy from a given site in the site tree.
+"""
+input DeleteSiteProxyInput {
+  id: ID!
+}
+
+"""
+Specifies the input fields required to delete an existing recorded login sequence for a site.
+"""
+input DeleteSiteRecordedLoginInput {
+  "The unique identifier for the recorded login sequence that you want to delete."
+  id: ID!
+}
+
+"Specifies the input fields required to delete a request cookie."
+input DeleteSiteRequestCookieInput {
+  "The unique identifier of the request cookie to delete."
+  id: ID!
+}
+
+"Specifies the input fields required to delete a request header."
+input DeleteSiteRequestHeaderInput {
+  "The unique identifier of the request header to delete."
+  id: ID!
+}
+
+"The input to delete an existing tag."
+input DeleteTagInput {
+  "The unique identifier of the tag to delete."
+  tag_id: ID!
+}
+
+"""
+Specifies the input fields required to create a new recipient of scan completion reports.
+"""
+input EmailRecipientInput {
+  "The email address to which the scan completion report is sent."
+  email: String!
+}
+
+"Specifies the input fields required to enable or disable an agent."
+input EnableAgentInput {
+  "The unique identifier of the agent that you want to enable or disable."
+  id: ID!
+  "Determines whether this agent is currently enabled and, therefore, can be used to run scans. While disabled, it will be skipped when new scans are distributed among your pool of agent machines."
+  enabled: Boolean!
+}
+
+input FeedbackRating {
+  type: FeedbackRatingType!
+  entity_id: ID!
+  rating: Int!
+  comment: String
+}
+
+input FetchAndParseApiDefinitionUrlInput {
+  url: String!
+  agent_pool_id: ID!
+  additional_headers: [CheckApiDefinitionUrlHeader!]
+  proxy: ProxyInput
+}
+
+"The file that contains the API definition."
+input FileBasedApiDefinitionInput {
+  "The filename of the file where the API definitions are listed."
+  filename: String!
+  "The API definition file contents."
+  contents: String!
+  "The filename of the environment file used when uploading a Postman collection."
+  environment_filename: String
+  "A list of the API authentication schemes (for example: Basic, Bearer Token, API Key)."
+  authentications: [ApiAuthenticationInput!]!
+  "A list of the API endpoints."
+  enabled_endpoints: [ApiEndpointInput!]!
+}
+
+"A GitLab project."
+input GitLabProjectInput {
+  "The id of the GitLab project."
+  id: ID!
+  "The name of the GitLab project."
+  name: String!
+}
+
+"A GitLab project link."
+input GitLabProjectLinkInput {
+  "A GitLab project."
+  project: GitLabProjectInput!
+  "A GitLab issue type."
+  issue_type: GitLabIssueType!
+}
+
+input GlobalConcurrentScanSettingsInput {
+  "The maximum number of scans that are allowed to run on the scanning machines at the same time."
+  global_scans_enabled: Boolean
+  "Enable scan throttling. If this is false, all available agent licenses will be used."
+  global_scan_throttle_enabled: Boolean
+  "The maximum number of scans that are allowed to run on the scanning machines at the same time, if throttling is enabled."
+  global_max_concurrent_scans: Int
+}
+
+input IncrementCounterInput {
+  counter: Counter!
+}
+
+input JiraCredentialsInput {
+  url: String!
+  username: String
+  api_token: String
+}
+
+input JiraCustomFieldInput {
+  id: ID!
+  type: String!
+  value: String!
+}
+
+input JiraParentInput {
+  id: ID!
+  name: String!
+}
+
+input JiraProjectInput {
+  id: ID!
+  name: String!
+}
+
+input JiraTicketSearchInput {
+  project_id: ID!
+  ticket_types: [ID!]!
+  search_term: String
+}
+
+input JiraTicketTypeFieldsInput {
+  project_id: ID!
+  ticket_type_id: ID!
+}
+
+input JiraTicketTypeInput {
+  id: ID!
+  name: String!
+}
+
+"Create a new GitLab link."
+input LinkGitLabIssueInput {
+  scan_id: ID!
+  serial_number: String!
+  project_id: ID!
+  gitlab_issue_id: ID!
+}
+
+input LinkJiraTicketInput {
+  scan_id: ID!
+  serial_number: String!
+  ticket_key: String!
+}
+
+"Create a new Trello card link."
+input LinkTrelloCardInput {
+  scan_id: ID!
+  serial_number: String!
+  short_link: String!
+}
+
+"""
+Specifies the input fields required to create a new set of login credentials. This set of credentials is used by scans to crawl areas of the site that are only accessible to registered users.
+"""
+input LoginCredentialInput {
+  "A name for the set of login credentials to help you identify it."
+  label: String!
+  "The username that Burp Scanner will use to log in to the site."
+  username: String!
+  "The password for the account that Burp Scanner will use to log in to the site."
+  password: String!
+}
+
+input ManagePreScanCheckInput {
+  "The unique identifier of the site with the pre-scan check."
+  site_id: ID!
+}
+
+"Specifies the fields required to mark an issue as a false positive."
+input MarkFalsePositiveInput {
+  "The unique identifier of the scan that found the issue that you want to mark or unmark as a false positive."
+  scan_id: ID!
+  "The unique identifier for the individual instance of the issue that you want to mark or unmark as a false positive."
+  serial_number: ID
+  "Determines whether this change applies only to this instance of the issue, to all issues of the same type at the same URL, or all issues of the same type across the entire site."
+  propagation_mode: PropagationMode
+  "A user-supplied note."
+  note: String
+  "Specifies whether to share telemetry data with PortSwigger to help improve the scanner. Defaults to true if not specified."
+  share_telemetry: Boolean
+}
+
+"Specifies the input fields required to move an agent to an agent pool."
+input MoveAgentPoolInput {
+  "The unique identifier of the agent you want to move."
+  agent_id: ID!
+  "The unique identifier of the pool you wish to move the agent to."
+  agent_pool_id: ID!
+}
+
+"""
+Specifies the input fields required to move a site for a CI-driven scan to new location in the site tree.
+"""
+input MoveCidsSiteInput {
+  "The unique identifier of the site for a CI-driven scan that you want to move."
+  cids_site_id: ID!
+  "The unique identifier of the folder you want to move the site to. To move the site for a CI-driven scan to the root level, enter 0."
+  parent_id: ID!
+}
+
+"""
+Specifies the input fields required to move a folder to a new location in the site tree.
+"""
+input MoveFolderInput {
+  "The unique identifier of the folder that you want to move."
+  folder_id: ID!
+  "The unique identifier of the folder you want to move this folder to. To move the folder to the root level, enter 0."
+  parent_id: ID!
+}
+
+"""
+Specifies the input fields required to move a site to new location in the site tree.
+"""
+input MoveSiteInput {
+  "The unique identifier of the site that you want to move."
+  site_id: ID!
+  "The unique identifier of the folder you want to move the site to. To move the site to the root level, enter 0."
+  parent_id: ID!
+}
+
+"Specifies the input fields required to pause a running scan."
+input PauseScanInput {
+  "The unique identifier of the scan that you want to pause."
+  id: ID!
+}
+
+input PlatformAuthenticationInput {
+  destination_host: String!
+  type: PlatformAuthenticationType
+  username: String!
+  password: String!
+  domain: String
+  domain_hostname: String
+}
+
+input ProxyInput {
+  destination_host: String!
+  proxy_host: String!
+  proxy_port: Int!
+  authentication_type: ProxyAuthenticationType!
+  username: String
+  password: String
+  domain_hostname: String
+  domain: String
+}
+
+input QuestionnaireAnswer {
+  questionnaire_id: ID!
+  question_number: String!
+  answer: String
+  no_answer: Boolean!
+}
+
+"""
+Specifies the input fields required to create a new recorded login sequence. This recorded login sequence is used by scans to crawl areas of the site that are only accessible to registered users.
+"""
+input RecordedLoginInput {
+  "A name for the recorded login sequence to help you identify it."
+  label: String!
+  "The JSON-based script for the recorded login sequence. This is generated by the Burp Suite Navigation Recorder extension when you record the login sequence in your browser."
+  script: String!
+  "Optional authentication status check configuration."
+  authenticationStatusCheck: AuthenticationStatusCheckInput
+}
+
+"""
+Specifies the input fields required to update an existing recorded login sequence.
+"""
+input RecordedLoginUpdateInput {
+  "A name for the recorded login sequence to help you identify it."
+  label: String!
+  "The JSON-based script for the recorded login sequence."
+  script: String
+  "Optional authentication status check configuration."
+  authenticationStatusCheck: AuthenticationStatusCheckInput
+}
+
+"Refreshes a GitLab issue."
+input RefreshGitLabIssueInput {
+  link_id: ID!
+}
+
+input RefreshJiraTicketInput {
+  link_id: ID!
+}
+
+input RefreshTrelloCardInput {
+  link_id: ID!
+}
+
+"The input to remove tags from nodes in the site tree."
+input RemoveTagsFromNodesInput {
+  "The IDs of the tags to remove."
+  tag_ids: [ID!]!
+  "The IDs of the sites or folders to remove tags from."
+  node_ids: [ID!]!
+}
+
+"Specifies the input fields required to rename an agent machine."
+input RenameAgentInput {
+  "The unique identifier of the agent machine that you want to rename."
+  id: ID!
+  "The new name for the agent machine. This is the name that is displayed in the Burp Suite DAST web UI."
+  name: String!
+}
+
+"Specifies the input fields required to rename a site for a CI-driven scan."
+input RenameCidsSiteInput {
+  "The unique identifier of the site for a CI-driven scan that you want to rename."
+  id: ID!
+  "The new name for the site for a CI-driven scan. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String!
+}
+
+"Specifies the input fields required to rename a folder."
+input RenameFolderInput {
+  "The unique identifier of the folder that you want to rename."
+  id: ID!
+  "The new name that you want to give the folder."
+  name: String!
+}
+
+input RenameScanningMachineAuthenticationTokenInput {
+  "The token hash of the authentication token."
+  token_hash: String!
+  "The new authentication token name"
+  name: String!
+}
+
+"Specifies the input fields required to rename a site."
+input RenameSiteInput {
+  "The unique identifier of the site that you want to rename."
+  id: ID!
+  "The new name for the site. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String!
+}
+
+"""
+Specifies the input fields required to configure a cookie to be sent with scan requests.
+"""
+input RequestCookieInput {
+  name: String!
+  value: String!
+  scope_prefix: String
+}
+
+"""
+Specifies the input fields required to configure a header to be sent with scan requests.
+"""
+input RequestHeaderInput {
+  name: String!
+  value: String!
+  scope_prefix: String
+}
+
+"Reset MFA for a user"
+input ResetMfaSecretInput {
+  user_id: ID!
+}
+
+"Specifies the input fields required to resume a paused scan."
+input ResumeScanInput {
+  "The unique identifier of the scan that you want to resume."
+  id: ID!
+}
+
+"Specifies the input fields required to create the schedule for a schedule item."
+input ScheduleInput {
+  "The time at which the scan should for the first time."
+  initial_run_time: Timestamp
+  "<p>Determines how frequently the scan runs. This must be specified in RRULE format.</p>
+<p>The structure of the RRULE format is described in <a href="https://tools.ietf.org/html/rfc5545">RFC5545</a>, <a href="https://tools.ietf.org/html/rfc5546">RFC5546</a>, and <a href="https://tools.ietf.org/html/rfc5547">RFC5547</a>.</p>
+<p>For example, the following would run a scan that was scheduled to run once a month on the 19th of the month: <code>FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=19</code></p>
+<p>Run a scan every 10 minutes: <code>FREQ=MINUTELY;INTERVAL=10</code></p>
+<p>Run a scan every 3 hours: <code>FREQ=HOURLY;INTERVAL=3</code></p>
+<p>Run a scan every day <code>FREQ=DAILY;INTERVAL=1</code></p>
+<p>Run a scan every 2 days: <code>FREQ=DAILY;INTERVAL=2</code></p>
+<p>Run a scan every 2 weeks on a Tuesday: <code>FREQ=WEEKLY;INTERVAL=2;BYDAY=TU</code></p>
+<p>Run a scan every 4 weeks on Mondays: <code>FREQ=WEEKLY;INTERVAL=4;BYDAY=MO</code></p>
+<p>Run a scan every 4 weeks on Mondays, Wednesdays and Fridays: <code>FREQ=WEEKLY;INTERVAL=4;BYDAY=MO,WE,FR</code></p>
+<p>Run a scan every 6 months on the 16th day of the Month: <code>FREQ=MONTHLY;INTERVAL=6;BYMONTHDAY=16</code></p>
+<p>Run a scan every 6 months on the 3rd Wednesday: <code>FREQ=MONTHLY;INTERVAL=6;BYDAY=3WE</code></p>
+<p>The above rules can be combined with limits of an absolute number of scans and/or scanning until a set date:</p>
+<p>Run a scan every day, until it has been done 10 times: <code>FREQ=DAILY;COUNT=10;INTERVAL=1</code></p>
+<p>Run a scan every hour until 2021-01-01 10:00: <code>FREQ=HOURLY;UNTIL=20210101T100400Z;INTERVAL=1</code></p>"
+  rrule: String
+  "The name of the schedule"
+  name: String
+  "The description of the schedule"
+  description: String
+}
+
+"Specifies the input fields required to set the scope of a site."
+input ScopeV2Input {
+  "The URLs that Burp Scanner begins the scan from."
+  start_urls: [String!]!
+  "A list of URLs that Burp Scanner is allowed to scan. If the list is empty, the site scope is automatically derived from the start URLs."
+  in_scope_url_prefixes: [String!]
+  "A list of URLs that will be skipped during scans of this site. For example, if a particular subdirectory contains sensitive data, you can enter its URL here to exclude it from scans. All subdirectories of an excluded URL will also be skipped."
+  out_of_scope_url_prefixes: [String!]
+  "Options to determine which protocols are used when scanning your site's URLs."
+  protocol_options: ScopeProtocolOptions!
+}
+
+"A Slack channel to store in the Slack settings."
+input SlackChannelInput {
+  "The id of the Slack channel."
+  id: ID!
+  "The name of the Slack channel."
+  name: String!
+}
+
+"A list of Slack channel to add to a site/folder."
+input SlackChannelsInput {
+  "The list of Slack channels."
+  recipients: [SlackRecipientInput!]!
+}
+
+"A Slack channel to add to a site/folder."
+input SlackRecipientInput {
+  "The unique identifier of the Slack channel."
+  id: ID!
+}
+
+"Specifies a board and list combination where issues can be created by users."
+input TrelloBoardLinkInput {
+  list_id: String!
+  list_name: String!
+  board_id: String!
+  board_name: String!
+}
+
+"Unlinks a GitLab link."
+input UnlinkGitLabIssueInput {
+  link_id: ID!
+}
+
+input UnlinkJiraTicketInput {
+  link_id: ID!
+  serial_number: String
+}
+
+input UnlinkTrelloCardInput {
+  link_id: ID!
+}
+
+"""
+Specifies the input fields required to update the maximum number of concurrent scans allowed to run on an agent machine.
+"""
+input UpdateAgentMaxConcurrentScansInput {
+  "The unique identifier of the agent machine."
+  id: ID!
+  "The maximum number of scans that are allowed to run on this machine at the same time."
+  max_concurrent_scans: Int!
+}
+
+"Specifies the input fields required to update an existing agent pool."
+input UpdateAgentPoolInput {
+  "The ID of the agent pool."
+  agent_pool_id: ID!
+  "The name for the new agent pool. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String
+  "An optional description of the agent pool."
+  description: String
+}
+
+"Specifies the input fields required to update a BCheck to the library."
+input UpdateBCheckByNameInput {
+  "The name of the BCheck file."
+  filename: String!
+  "The BCheck script itself."
+  script: String!
+}
+
+"Specifies the input fields required to update a BCheck to the library."
+input UpdateBCheckInput {
+  id: ID!
+  "The name of the BCheck file."
+  filename: String!
+  "The BCheck script itself."
+  script: String!
+}
+
+"""
+Specifies the input fields required to update the description of a custom extension.
+"""
+input UpdateCustomExtensionDescriptionInput {
+  "The unique identifier of the custom extension."
+  id: ID!
+  "The new description for the custom extension."
+  description: String!
+}
+
+"""
+Specifies the input fields required to update the .jar file of a custom extension.
+"""
+input UpdateCustomExtensionJarInput {
+  id: ID!
+  "The original name of the extension file."
+  extension_filename: String!
+  "The contents of the extension as base64-encoded, expected to be a .jar file."
+  extension_jar_as_base_64: String!
+}
+
+"Specifies the input fields required to update the name of a custom extension."
+input UpdateCustomExtensionNameInput {
+  "The unique identifier of the custom extension."
+  id: ID!
+  "The new name for the custom extension."
+  name: String!
+}
+
+"""
+Specifies the fields required to update whether an issue should be treated as a false positive or not.
+"""
+input UpdateFalsePositiveInput {
+  "The unique identifier of the scan that found the issue that you want to mark or unmark as a false positive."
+  scan_id: ID!
+  "The unique identifier for the individual instance of the issue that you want to mark or unmark as a false positive."
+  serial_number: ID
+  "Specifies whether the issue should be marked as a false positive or not."
+  is_false_positive: Boolean
+  "Determines whether this change applies only to this instance of the issue, to all issues of the same type at the same URL, or all issues of the same type across the entire site."
+  propagation_mode: PropagationMode
+  "Specifies whether to share telemetry data with PortSwigger to help improve the scanner. Defaults to true if not specified."
+  share_telemetry: Boolean
+}
+
+"""
+Specifies the input fields required to update the BChecks for a given folder in the site tree.
+"""
+input UpdateFolderBChecksInput {
+  "The unique identifier of the folder you want to update BChecks for."
+  id: ID!
+  "A list of the BChecks to use for scans of the folder."
+  bcheck_ids: [ID!]
+}
+
+"""
+Specifies the input fields required to update the description for a given folder in the site tree.
+"""
+input UpdateFolderDescriptionInput {
+  "The unique identifier of the folder whose description you want to update."
+  id: ID!
+  "The updated folder description."
+  description: String
+}
+
+"""
+Specifies the input fields required to update the email address for an existing recipient of scan completion reports for this folder.
+"""
+input UpdateFolderEmailRecipientInput {
+  "the unique identifier of the email recipient that you want to update."
+  id: ID!
+  "The new email address that you want to send scan completion reports to."
+  email: String!
+}
+
+"""
+Specifies the input fields required to update the extensions for a given folder in the site tree.
+"""
+input UpdateFolderExtensionsInput {
+  "The unique identifier of the folder you want to update extensions for."
+  id: ID!
+  "A list of the extensions to use for scans of the folder."
+  extension_ids: [ID!]
+}
+
+input UpdateFolderRequestCookieInput {
+  id: ID!
+  request_cookie: RequestCookieInput!
+}
+
+input UpdateFolderRequestHeaderInput {
+  id: ID!
+  request_header: RequestHeaderInput!
+}
+
+"""
+Specifies the input fields required to update the scan configurations for a given folder in the site tree.
+"""
+input UpdateFolderScanConfigurationsInput {
+  "The unique identifier of the folder whose scan configurations you want to update."
+  id: ID!
+  "A list of the scan configurations that you want to use for scans of the sites in the folder that you are updating."
+  scan_configuration_ids: [ID!]
+}
+
+"""
+Specifies the input fields required to update the Slack notifications for a given folder in the site tree.
+"""
+input UpdateFolderSlackChannelsInput {
+  "The unique identifier of the folder that you want to update the Slack notifications for."
+  folder_id: ID!
+  "A list of the Slack recipients that you want to use for scans of the sites in the folder you are updating."
+  recipients: [SlackRecipientInput!]!
+}
+
+input UpdateForwardPropagationSettingsInput {
+  false_positive: ForwardPropagationMode
+  severity: ForwardPropagationMode
+  accepted_risk: ForwardPropagationMode
+}
+
+"A GitLab connection to add to the site."
+input UpdateGitLabSettingsInput {
+  url: String!
+  access_token: String
+  project_links: [GitLabProjectLinkInput!]!
+  auto_gitlab_settings: AutomaticGitLabSettingsInput
+}
+
+"Specifies the fields for updating an issue"
+input UpdateIssueInput {
+  "The unique identifier of the scan that found the issue that you want to change the severity of."
+  scan_id: ID!
+  "The unique identifier for the individual instance of the issue that you want to change the severity of."
+  serial_number: ID!
+  "The new severity of the issue"
+  severity: Severity
+  "Specifies whether the issue should be marked as an accepted risk or not."
+  accepted_risk: Boolean
+  "Determines whether this change applies only to this instance of the issue, to all issues of the same type at the same URL, or all issues of the same type across the entire site."
+  propagation_mode: PropagationMode
+  "A user-supplied note."
+  note: String
+}
+
+input UpdateJiraAutomaticRuleInput {
+  id: ID!
+  name: String!
+  description: String
+  severities: [Severity!]!
+  confidences: [Confidence!]!
+  site_ids: [ID!]
+  folder_ids: [ID!]
+  project: JiraProjectInput!
+  ticket_type: JiraTicketTypeInput!
+  parent: JiraParentInput
+  backfill_jira_tickets: Boolean
+  custom_fields: [JiraCustomFieldInput!]
+}
+
+input UpdateJiraManualRuleInput {
+  id: ID
+  name: String!
+  description: String
+  project: JiraProjectInput!
+  ticket_type: JiraTicketTypeInput!
+  parent: JiraParentInput
+  custom_fields: [JiraCustomFieldInput!]
+}
+
+"Specifies the fields required to update MFA settings."
+input UpdateMfaSettingsInput {
+  enabled: Boolean!
+  totp_secret: String
+  totp_code: Int
+}
+
+"Input type for updating the project file storage path configuration."
+input UpdateProjectFileStoragePathInput {
+  "The new path where project files should be stored."
+  path: String!
+}
+
+"Specifies the input fields required to update a scan configuration."
+input UpdateScanConfigurationInput {
+  "The unique identifier of the scan configuration that you want to update."
+  id: ID!
+  "The name of the scan configuration. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String
+  "The updated scan configuration in JSON format."
+  scan_configuration_fragment_json: String
+}
+
+"Specifies the input fields required to update a schedule."
+input UpdateScheduleInput {
+  "The time at which the scan will run for the first time. A null entry indicates that the scan should start immediately."
+  initial_run_time: Timestamp
+  "Determines whether you want to update the initial run time."
+  initial_run_time_is_set: Boolean
+  "<p>Determines how frequently the scan runs. A null entry indicates that the value will not be changed.</p>
+<p>This must be specified in RRULE format.</p>
+<p>The structure of the RRULE format is described in <a href="https://tools.ietf.org/html/rfc5545">RFC5545</a>, <a href="https://tools.ietf.org/html/rfc5546">RFC5546</a>, and <a href="https://tools.ietf.org/html/rfc5547">RFC5547</a>.</p>
+<p>For example, the following would run a scan that was scheduled to run once a month on the 19th of the month: <code>FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=19</code></p>
+<p>Run a scan every 10 minutes: <code>FREQ=MINUTELY;INTERVAL=10</code></p>
+<p>Run a scan every 3 hours: <code>FREQ=HOURLY;INTERVAL=3</code></p>
+<p>Run a scan every day <code>FREQ=DAILY;INTERVAL=1</code></p>
+<p>Run a scan every 2 days: <code>FREQ=DAILY;INTERVAL=2</code></p>
+<p>Run a scan every 2 weeks on a Tuesday: <code>FREQ=WEEKLY;INTERVAL=2;BYDAY=TU</code></p>
+<p>Run a scan every 4 weeks on Mondays: <code>FREQ=WEEKLY;INTERVAL=4;BYDAY=MO</code></p>
+<p>Run a scan every 4 weeks on Mondays, Wednesdays and Fridays: <code>FREQ=WEEKLY;INTERVAL=4;BYDAY=MO,WE,FR</code></p>
+<p>Run a scan every 6 months on the 16th day of the Month: <code>FREQ=MONTHLY;INTERVAL=6;BYMONTHDAY=16</code></p>
+<p>Run a scan every 6 months on the 3rd Wednesday: <code>FREQ=MONTHLY;INTERVAL=6;BYDAY=3WE</code></p>
+<p>The above rules can be combined with limits of an absolute number of scans and/or scanning until a set date:</p>
+<p>Run a scan every day, until it has been done 10 times: <code>FREQ=DAILY;COUNT=10;INTERVAL=1</code></p>
+<p>Run a scan every hour until 2021-01-01 10:00: <code>FREQ=HOURLY;UNTIL=20210101T100400Z;INTERVAL=1</code></p>"
+  rrule: String
+  "Determines whether you want to update how frequently a recurring the scan runs."
+  rrule_is_set: Boolean
+  "The name of the schedule. A null entry indicates that the value will not be changed."
+  name: String
+  "Determines whether you want to update the name of the schedule. A null entry indicates that the value will not be changed."
+  name_is_set: Boolean
+  "The description of the schedule. A null entry indicates that the value will not be changed."
+  description: String
+  "Determines whether you want to update the description of the schedule"
+  description_is_set: Boolean
+}
+
+"Specifies the input fields required to update a schedule item."
+input UpdateScheduleItemInput {
+  "The unique identifier of the schedule item that you want to update."
+  id: ID!
+  "The list of unique identifiers of the sites that you want to associate with the schedule item."
+  site_ids: [ID!]
+  "The list of unique identifiers of the folders that you want to associate with the schedule item."
+  folder_ids: [ID!]
+  "The scheduling information for the schedule item that you want to update, such as when the scan should run and how often."
+  schedule: UpdateScheduleInput
+  "A list of scan configurations that you want to use for scans created from this schedule item."
+  scan_configuration_ids: [ID!]
+  "Whether verbose debug will be produced for the scan."
+  verbose_debug: Boolean
+}
+
+input UpdateScimSettingsInput {
+  enabled: Boolean!
+  port: Int
+  use_tls: Boolean!
+  certificate_password: String
+  certificate_base64: String
+  certificate_name: String
+}
+
+"""
+Specifies the input fields required to update the authentication schemes for an API definition.
+"""
+input UpdateSiteApiDefinitionAuthenticationsInput {
+  "The unique identifier of the API definition to be updated"
+  id: ID!
+  "A list of the API authentication schemes (for example: Basic, Bearer Token, API Key)."
+  authentications: [ApiAuthenticationInput!]!
+}
+
+"""
+Specifies the input fields required to update the enabled endpoints for an API definition.
+"""
+input UpdateSiteApiDefinitionEnabledEndpointsInput {
+  "The unique identifier of the API definition to be updated"
+  id: ID!
+  "A list of the enabled API endpoints."
+  enabled_endpoints: [ApiEndpointInput!]!
+}
+
+"""
+Specifies the input fields required to update the API definition for scans of a given site.
+"""
+input UpdateSiteApiDefinitionInput {
+  "The unique identifier of the API definition to be updated"
+  id: ID!
+  "The API definition."
+  api_definition: ApiDefinitionInput!
+  "If you are using a hosted dashboard version of Burp Suite DAST, enable this setting to confirm that you have permission to scan all URLs within your configured scope.
+
+You do not need to do this if you are using a self-hosted version of Burp Suite DAST."
+  confirm_permission_to_scan: Boolean
+}
+
+"""
+Specifies the input fields required to update the BChecks for a given site in the site tree.
+"""
+input UpdateSiteBChecksInput {
+  "The unique identifier of the site whose scan configurations you want to update."
+  id: ID!
+  "A list of the BCheck IDs that you want to use for scans of the site that you are updating."
+  bcheck_ids: [ID!]
+}
+
+"""
+Specifies the input fields required to update the email address for an existing recipient of scan completion reports.
+"""
+input UpdateSiteEmailRecipientInput {
+  "The unique identifier of the email recipient that you want to update."
+  id: ID!
+  "The new email address to which scan completion reports should be sent."
+  email: String!
+}
+
+"""
+Specifies the input fields required to update the extensions for a given site in the site tree.
+"""
+input UpdateSiteExtensionsInput {
+  "The unique identifier of the site whose scan configurations you want to update."
+  id: ID!
+  "A list of the scan configurations that you want to use for scans of the site that you are updating."
+  extension_ids: [ID!]
+}
+
+"""
+Specifies the input fields required to update an existing set of login credentials for a given site.
+"""
+input UpdateSiteLoginCredentialInput {
+  "The unique identifier of the set of login credentials that you want to update."
+  id: ID!
+  "A name that you want to use to help identify the set of login credentials."
+  label: String
+  "The new username that will be used by Burp Scanner to log in to the site."
+  username: String
+  "The new password that will be used by Burp Scanner to log in to the site."
+  password: String
+}
+
+input UpdateSiteRecordedLoginInput {
+  "The unique identifier for the recorded login sequence that you want to update."
+  id: ID!
+  "The fields used to update the recorded login sequence."
+  recorded_login: RecordedLoginUpdateInput!
+}
+
+input UpdateSiteRequestCookieInput {
+  "The unique identifier of the request cookie to update."
+  id: ID!
+  "The request cookie to update."
+  request_cookie: RequestCookieInput!
+}
+
+input UpdateSiteRequestHeaderInput {
+  "The unique identifier of the request header to update."
+  id: ID!
+  "The request header to update."
+  request_header: RequestHeaderInput!
+}
+
+"""
+Specifies the input fields required to update the scan configurations for a given site in the site tree.
+"""
+input UpdateSiteScanConfigurationsInput {
+  "The unique identifier of the site whose scan configurations you want to update."
+  id: ID!
+  "A list of the scan configurations that you want to use for scans of the site that you are updating."
+  scan_configuration_ids: [ID!]
+}
+
+"""
+Specifies the input fields required to update the scope for scans of a given site.
+"""
+input UpdateSiteScopeV2Input {
+  "The unique identifier of the site whose scope you want to update."
+  site_id: ID!
+  "The site scope."
+  scope_v2: ScopeV2Input!
+  "If you are using a hosted dashboard version of Burp Suite DAST, enable this setting to confirm that you have permission to scan all URLs within your configured scope.
+
+You do not need to do this if you are using a self-hosted version of Burp Suite DAST."
+  confirm_permission_to_scan: Boolean
+}
+
+"""
+Specifies the input fields required to update the Slack notifications for a given site in the site tree.
+"""
+input UpdateSiteSlackChannelsInput {
+  "The unique identifier of the site whose Slack notifications you want to update."
+  site_id: ID!
+  "A list of the Slack recipients that you want to use for scans of the site that you are updating."
+  recipients: [SlackRecipientInput!]
+}
+
+"Slack settings to update."
+input UpdateSlackSettingsInput {
+  auth_token: String
+  channels: [SlackChannelInput!]!
+}
+
+"""
+Input type for updating Splunk integration settings.
+
+Provides the configuration needed to establish or update the connection
+between Burp Suite DAST and a Splunk instance.
+"""
+input UpdateSplunkEnterpriseSecuritySettingsInput {
+  "The URL of the Splunk instance.
+    
+Must include the protocol (https://) and HTTP port number (typically 8088).
+For Splunk Cloud Platform, must be hosted on *.splunkcloud.com.
+    
+Example: "https://splunk.example.com:8088""
+  url: String!
+  "The HTTP Event Collector token value.
+    
+This token authenticates requests from Burp Suite DAST to your Splunk instance.
+You must create an HTTP Event Collector token in Splunk before configuring
+this integration."
+  auth_token: String!
+}
+
+"The input to update an existing tag."
+input UpdateTagInput {
+  "The unique identifier of the tag to update."
+  id: ID!
+  "The name of the tag."
+  name: String!
+  "The description of the tag."
+  description: String
+  "The color of the tag."
+  color: TagColor!
+}
+
+"Trello settings to update."
+input UpdateTrelloSettingsInput {
+  api_key: String
+  api_token: String
+  board_links: [TrelloBoardLinkInput!]
+  auto_trello_settings: AutomaticTrelloSettingsInput
+}
+
+input UpdateUserActivityLogSettingsInput {
+  enabled: Boolean
+  retention_period: Int
+}
+
+"Specifies the input fields required to upload a BCheck to the library."
+input UploadBCheckInput {
+  "The name of the BCheck file."
+  filename: String!
+  "The BCheck script itself."
+  script: String!
+}
+
+"Specifies the input fields required to upload a BApp to the library."
+input UploadBappInput {
+  "The original name of the extension file."
+  extension_filename: String!
+  "The contents of the extension as base64-encoded."
+  extension_file_as_base_64: String!
+}
+
+input UploadCsvSitesInput {
+  folder_id: ID!
+  sites_csv: String!
+}
+
+"Specifies the input fields required to upload a custom extension to the library."
+input UploadCustomExtensionInput {
+  "The name of the extension file."
+  extension_filename: String!
+  "The contents of the extension as base64-encoded, expected to be a .jar file."
+  extension_jar_as_base_64: String!
+  "The name of the custom extension."
+  name: String!
+  "The description of the custom extension."
+  description: String!
+}
+
+"The URL that hosts the API definition file."
+input UrlBasedApiDefinitionInput {
+  "The URL where the API definition file is hosted."
+  url: String!
+  "A list of the API authentication schemes (for example: Basic, Bearer Token, API Key)."
+  authentications: [ApiAuthenticationInput!]!
+}
+
+# ==============================================================================
+# TYPES
+# ==============================================================================
+
+"A change to the accepted risk status of an issue."
+type AcceptedRiskIssueChange {
+  "Whether an issue was marked (true) or unmarked (false) as an accepted risk."
+  accepted_risk: Boolean
+}
+
+type AddScanningMachineAuthenticationTokenPayload {
+  "The authentication token."
+  token: String!
+  "The authentication token name"
+  name: String!
+}
+
+type AddScanningMachinePayLoad {
+  "The api key of the hosted scanning machine."
+  api_key: String!
+  "The newly created agent machine"
+  agent: Agent
+}
+
+"The fields and values that are returned after adding tags to nodes."
+type AddTagsToNodesPayload {
+  successful: Boolean!
+}
+
+"""
+A virtual or physical machine that you have configured for use as an agent machine in Burp Suite DAST. Agent machines are the machines on which your scans run. All new agent machines must be authorized before they can communicate with the DAST server and run scans.
+"""
+type Agent implements AgentMachine {
+  "The unique identifier of the agent machine."
+  id: ID
+  "The unique identifier of the machine that you have configured for use as an agent machine."
+  machine_id: ID
+  "The number of scans that are currently running on this agent machine."
+  current_scan_count: Int
+  "The IP address of the machine that is configured for use as an agent machine."
+  ip: String
+  "The name of the agent machine. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String!
+  "The health status of the agent machine, as shown on the Burp Suite DAST web UI."
+  state: String
+  "An error that has occurred on the agent machine."
+  error: AgentError
+  "Indicates whether this agent machine is currently enabled and, therefore, allowed to run scans. While a machine is disabled, it will be skipped when new scans are distributed among your pool of agent machines."
+  enabled: Boolean
+  "The maximum number of scans that are allowed to run on this machine at the same time."
+  max_concurrent_scans: Int
+  "Available CPU cores on the agent."
+  cpu_cores: Int
+  "Total RAM installed on the agent in Gigabytes."
+  system_ram_gb: Int
+  "The agent pool this agent is assigned to."
+  agent_pool: AgentPool
+  "agent resource warning."
+  warning: AgentWarningType
+  "name of the last used token"
+  last_used_token_name: String
+}
+
+"An error that has occurred on the agent machine."
+type AgentError {
+  "A reference number for the error. This is used to identify the exact error during troubleshooting."
+  code: Int
+  "The content of the error message, indicating what caused the error and what you need to do to resolve it."
+  error: String
+}
+
+"A pool to which agents can be assigned to dedicate agents to specific sites"
+type AgentPool {
+  "The unique identifier of the agent pool."
+  id: ID!
+  "The name of the agent pool."
+  name: String
+  "The description of the agent pool."
+  description: String
+  "The agents in the pool."
+  agents: [Agent!]
+  "The sites that use the pool."
+  sites: [Site!]
+}
+
+"The Basic authentication scheme."
+type ApiBasicAuthentication {
+  "The Basic authentication scheme type (BASIC)."
+  type: ApiAuthenticationType!
+  "The unique authentication scheme label."
+  label: String!
+  "The Basic authentication scheme username."
+  username: String
+  "The Basic authentication scheme password."
+  password: String
+  "A flag to show that this authentication scheme was detected from parsing an API definition file."
+  was_detected: Boolean
+  "A flag to indicate if this authentication scheme has missing credentials."
+  has_missing_credentials: Boolean!
+}
+
+type ApiBasicAuthenticationCredentials {
+  "The unique authentication scheme label."
+  label: String!
+  "The username for the Basic authentication scheme."
+  username: String!
+  "The password for the Basic authentication scheme."
+  password: String!
+}
+
+"A Basic authentication scheme parsed from an API definition file."
+type ApiBasicAuthenticationWithoutCredentials {
+  "The Basic authentication scheme type (BASIC)."
+  type: ApiAuthenticationType!
+  "The unique authentication scheme label."
+  label: String!
+}
+
+"The Bearer Token authentication scheme."
+type ApiBearerTokenAuthentication {
+  "The Bearer Token authentication scheme type (BEARER)."
+  type: ApiAuthenticationType!
+  "The unique authentication scheme label."
+  label: String!
+  "The Bearer Token authentication scheme token."
+  token: String
+  "The Bearer Token authentication scheme dynamic token config."
+  dynamic_token_config: ApiDynamicAuthenticationTokenConfig
+  "A flag to show that this authentication scheme was detected from parsing an API definition file."
+  was_detected: Boolean
+  "A flag to indicate if this authentication scheme has missing credentials."
+  has_missing_credentials: Boolean!
+}
+
+type ApiBearerTokenAuthenticationCredentials {
+  "The unique authentication scheme label."
+  label: String!
+  "The Bearer Token for the Bearer Token authentication scheme."
+  bearer_token: String!
+}
+
+"A Bearer Token authentication scheme parsed from an API definition file."
+type ApiBearerTokenAuthenticationWithoutCredentials {
+  "The Bearer Token authentication scheme type (BEARER)."
+  type: ApiAuthenticationType!
+  "The unique authentication scheme label."
+  label: String!
+}
+
+"The API definition that Burp Scanner is allowed to audit during scanning."
+type ApiDefinition {
+  "The ID of this ApiDefinition"
+  id: ID!
+  "The URL where the API definition file is hosted."
+  url_based_api_definition: UrlBasedApiDefinition
+  "The file that contains the API definition."
+  file_based_api_definition: FileBasedApiDefinition
+}
+
+"The API dynamic authentication token config."
+type ApiDynamicAuthenticationTokenConfig {
+  "The authentication service URL."
+  request_url: String!
+  "The request method."
+  request_method: ApiDynamicAuthenticationTokenRequestMethod!
+  "The request headers."
+  request_headers: [ApiDynamicAuthenticationTokenRequestHeader!]
+  "The request body."
+  request_body: String
+  "The path to identify the token in the response. For JSON responses this is a dot-separated path. For XML responses this is an XPath expression."
+  extract_path: String!
+  "The refresh interval in seconds."
+  refresh_interval_seconds: Long!
+}
+
+"The API dynamic authentication token request header."
+type ApiDynamicAuthenticationTokenRequestHeader {
+  "The header name."
+  name: String!
+  "The header value."
+  value: String!
+}
+
+"The API definition file, or URL of where one is hosted."
+type ApiFilenameUrl {
+  "The API definition URL."
+  url_based_api_definition: UrlBasedApiDefinition
+  "The API definition file."
+  file_based_api_definition: FileBasedApiDefinition
+}
+
+"The API Key authentication scheme."
+type ApiKeyAuthentication {
+  "The API Key authentication scheme type (APIKEY)."
+  type: ApiAuthenticationType!
+  "The unique authentication scheme label."
+  label: String!
+  "The API Key authentication scheme destination (for example: HEADER, QUERY, COOKIE)."
+  api_key_destination: ApiAuthenticationTokenDestination!
+  "The API Key authentication scheme parameter name (for example: API_KEY_NAME, apiKeyName)."
+  parameter_name: String!
+  "The API Key authentication scheme key."
+  key: String
+  "The dynamic token config."
+  dynamic_token_config: ApiDynamicAuthenticationTokenConfig
+  "A flag to show that this authentication scheme was detected from parsing an API definition file."
+  was_detected: Boolean
+  "A flag to indicate if this authentication scheme has missing credentials."
+  has_missing_credentials: Boolean!
+}
+
+type ApiKeyAuthenticationCredentials {
+  "The unique authentication scheme label."
+  label: String!
+  "The API Key for the API Key authentication scheme."
+  api_key: String!
+}
+
+"An API Key authentication scheme parsed from an API definition file."
+type ApiKeyAuthenticationWithoutCredentials {
+  "The API Key authentication scheme type (APIKEY)."
+  type: ApiAuthenticationType!
+  "The unique authentication scheme label."
+  label: String!
+  "The API Key authentication scheme destination (for example: HEADER, QUERY, COOKIE)."
+  api_key_destination: ApiAuthenticationTokenDestination!
+  "The API Key authentication scheme parameter name (for example: API_KEY_NAME, apiKey1)."
+  parameter_name: String!
+}
+
+"Any unsupported authentication scheme."
+type ApiUnsupportedAuthentication {
+  "The unsupported authentication scheme type."
+  type: ApiAuthenticationType!
+  "The unique authentication scheme label."
+  label: String!
+  "The unsupported authentication type."
+  authentication_type: String!
+}
+
+"An unsupported authentication scheme parsed from an API definition file."
+type ApiUnsupportedAuthenticationWithoutCredentials {
+  "The unsupported authentication scheme type."
+  type: ApiAuthenticationType!
+  "The unique authentication scheme label."
+  label: String!
+  "The unsupported authentication type."
+  authentication_type: String!
+}
+
+"""
+The collection of application logins that Burp Scanner can use to log in to the site. These can either be basic sets of login credentials or scripts of full login sequences that you recorded with the Burp Suite Navigation Recorder browser extension. Note that you can only use one type of application login for each site.
+"""
+type ApplicationLogins {
+  "A list of all the saved login credentials for this site. This set of credentials is used by scans to crawl areas of the site that are only accessible to registered users."
+  login_credentials: [LoginCredential!]!
+  "A list of all the recorded login sequences for this site. These are used by scans to handle more complex login mechanisms, such as single sign-on."
+  recorded_logins: [RecordedLogin!]!
+}
+
+"The fields and values that are returned after assigning."
+type AssignSitesToAgentPoolPayload {
+  "The updated sites."
+  sites: [Site]
+}
+
+"""
+An item that represents a distinct location on the website that needs to be audited. Multiple audit items can be identified for the same URL. There are various factors that determine whether multiple audit items are created. For example, there could be a separate audit item for each combination of insertion points, parameters, and headers in the request. Alternatively, separate audit items might be created based on the state of the application at the time when the request was sent, or the path that the crawler took through the application to arrive at this location.
+"""
+type AuditItem {
+  "The unique identifier of the audit item."
+  id: ID!
+  "The hostname of the URL where the audit item was found."
+  host: String!
+  "The URL path where the audit item was found."
+  path: String!
+  "The HTTP method of the audit item."
+  method: String
+  "A list of errors that occurred when auditing this item."
+  error_types: [ErrorType!]
+  "The number of issues found, sorted by their severity level."
+  issue_counts: IssueCounts!
+  "The number of requests sent to an audit item during the auditing phase."
+  number_of_requests: Int!
+  "The number of errors that occurred when auditing this item."
+  number_of_errors: Int!
+  "The number of insertion points identified for this audit item. An insertion point represents a piece of data in a request that might be specifically processed server-side. These can be parameter values, HTTP headers, cookie values, and so on. In the case of requests containing XML or JSON data, the entire body could even be an insertion point. Burp Scanner automatically identifies insertion points and injects payloads into them to probe for vulnerable behavior."
+  number_of_insertion_points: Int!
+  "A list of issues that were found for this audit item, grouped by their issue type."
+  issue_type_groups(
+    severities: [Severity]
+    confidences: [Confidence]
+    novelties: [Novelty]
+    accepted_risks: [Boolean]
+  ): [IssueTypeGroup!]
+}
+
+"""
+Specifies the input fields required to configure authentication status checking. This allows scans to verify whether a user remains authenticated during crawling by checking a specific URL for expected content.
+"""
+type AuthenticationStatusCheck {
+  "The URL to check for authentication status."
+  url: String!
+  "The confirmation text used to verify authentication status."
+  confirmationText: String!
+}
+
+"The fields and values that are returned after authorizing an agent machine."
+type AuthorizeAgentPayload {
+  "The newly authorized agent machine."
+  agent: Agent
+}
+
+type AutomaticGitLabSettings {
+  project_link: GitLabProjectLink
+  min_severity: Severity!
+  min_confidence: Confidence!
+}
+
+type AutomaticTrelloSettings {
+  board_link: TrelloBoardLink
+  min_severity: Severity!
+  min_confidence: Confidence!
+}
+
+"This describes a BCheck."
+type BCheck {
+  "The unique identifier of the BCheck."
+  id: ID!
+  "The filename provided when the BCheck was uploaded."
+  uploaded_filename: String!
+  "The name of the BCheck."
+  name: String!
+  "The description of the BCheck."
+  description: String
+  "The author of the BCheck."
+  author: String
+  "The tags of the BCheck."
+  tags: [String]!
+  "The date the BCheck was uploaded."
+  uploaded_date: Timestamp!
+  "The user who uploaded the BCheck."
+  uploaded_by: String
+}
+
+type BChecksContainer {
+  bchecks: [BCheck!]!
+  total_count: Int!
+}
+
+type BackupCode {
+  code: String!
+  used: Boolean!
+}
+
+"This describes the fields necessary to describe a BApp extension."
+type BappDetails {
+  "The unique identifier of the BApp."
+  bapp_uuid: String!
+  "The author of the BApp."
+  author: String!
+  "The version of the BApp."
+  version: String!
+}
+
+"Issue data in XML format."
+type BurpReport {
+  "Issue data in XML format that you can use to generate reports."
+  report_xml: String
+}
+
+"The fields and values that are returned after cancelling a scan."
+type CancelScanPayload {
+  "The unique identifier of the scan that was cancelled."
+  id: ID
+}
+
+type Capabilities {
+  email: Boolean!
+  slack: Boolean!
+  jira: Boolean!
+  gitlab: Boolean!
+  scim: Boolean!
+  ldap: Boolean!
+  saml: Boolean!
+  trello: Boolean!
+  "Indicates whether Splunk integration is available.
+    
+When true, supports streaming issues to Splunk for advanced analysis,
+real-time monitoring and event management."
+  splunk: Boolean!
+  mfa: Boolean!
+}
+
+"A representation of a site created by a CI-driven scan."
+type CidsSite {
+  "The unique identifier of the site."
+  id: ID!
+  "The name of the site. This is the name that appears on the Burp Suite DAST web UI. Note that the name of a site must be unique within its parent folder."
+  name: String!
+  "The unique identifier of the folder that is the parent of this site in the site tree hierarchy.  A parent ID of 0 indicates that this site is on the root level."
+  parent_id: ID!
+  "Indicates that this site for a CI-driven scan does not have a correlation ID. This means it will be deleted once the scan is completed."
+  ephemeral: Boolean @deprecated(reason: "Superseded by correlation ID")
+  "The correlation ID for the CI-driven scan site."
+  correlation_id: String
+  "The tags associated with this CI-driven scan site."
+  tags: [Tag!]
+}
+
+"""
+Exposes information about the number of issues found of each confidence level. Burp Scanner's confidence is based on the inherent reliability of the techniques used to identify each type of error.
+"""
+type CountsByConfidence {
+  "The total number of issues found."
+  total: Int!
+  "The number of issues found with a firm confidence level."
+  firm: Int!
+  "The number of issues found with a tentative confidence level."
+  tentative: Int!
+  "The number of issues found with a certain confidence level."
+  certain: Int!
+}
+
+"""
+An item that represents a distinct location on the website that needs to be audited. Multiple audit items can be identified for the same URL. There are various factors that determine whether multiple audit items are created. For example, there could be a separate audit item for each combination of insertion points, parameters, and headers in the request. Alternatively, separate audit items might be created based on the state of the application at the time when the request was sent, or the path that the crawler took through the application to arrive at this location.
+"""
+type CrawlItem {
+  "The unique identifier of the audit item."
+  id: ID!
+  "The hostname of the URL where the audit item was found."
+  host: String!
+  "The URL path where the audit item was found."
+  path: String!
+  "The status of the crawl item."
+  status: String
+}
+
+"The fields and values that are returned after creating a new agent pool."
+type CreateAgentPoolPayload {
+  "The newly created agent pool."
+  agent_pool: AgentPool!
+}
+
+"""
+The fields and values that are returned after creating a new recipient of scan completion reports, for this folder.
+"""
+type CreateFolderEmailRecipientPayload {
+  "The new email recipient."
+  email_recipient: EmailRecipient
+}
+
+"""
+The fields and values that are returned after creating a new folder in the site tree.
+"""
+type CreateFolderPayload {
+  "The newly created folder."
+  folder: Folder!
+}
+
+"""
+The fields and values that are returned after creating a platform authentication.
+"""
+type CreateFolderPlatformAuthenticationPayload {
+  platform_authentication: PlatformAuthentication!
+}
+
+"The fields and values that are returned after creating a proxy."
+type CreateFolderProxyPayload {
+  proxy: Proxy!
+}
+
+"The fields and values that are returned after creating a request cookie."
+type CreateFolderRequestCookiePayload {
+  request_cookie: RequestCookie!
+}
+
+"The fields and values that are returned after creating a request header."
+type CreateFolderRequestHeaderPayload {
+  request_header: RequestHeader!
+}
+
+"The fields and values that are returned after requesting a new pre-scan check."
+type CreatePreScanCheckPayload {
+  "The unique identifier of the site for the pre-scan check."
+  site_id: ID!
+  "The error state of the new pre-scan check."
+  error: CreatePreScanCheckError
+}
+
+"The fields and values that are returned after creating a new scan configuration."
+type CreateScanConfigurationPayload {
+  "The newly created scan configuration."
+  scan_configuration: ScanConfiguration!
+}
+
+"The fields and values that are returned after creating a new schedule item."
+type CreateScheduleItemPayload {
+  "The newly created schedule item."
+  schedule_item: ScheduleItem!
+}
+
+"""
+The fields and values that are returned after creating a new recipient of scan completion reports.
+"""
+type CreateSiteEmailRecipientPayload {
+  "The newly created email recipient."
+  email_recipient: EmailRecipient
+}
+
+"""
+The fields and values that are returned after creating a new application login for a site.
+"""
+type CreateSiteLoginCredentialPayload {
+  "The new set of login credentials that were added to the site."
+  login_credential: LoginCredential
+}
+
+"""
+The fields and values that are returned after creating a new site in the site tree.
+"""
+type CreateSitePayload {
+  "The newly created site."
+  site: Site!
+}
+
+"""
+The fields and values that are returned after creating a platform authentication.
+"""
+type CreateSitePlatformAuthenticationPayload {
+  platform_authentication: PlatformAuthentication!
+}
+
+"The fields and values that are returned after creating a proxy."
+type CreateSiteProxyPayload {
+  proxy: Proxy!
+}
+
+"""
+The fields and values that are returned after creating a new recorded login sequence for a site.
+"""
+type CreateSiteRecordedLoginPayload {
+  "The new recorded login sequence that was added to the site."
+  recorded_login: RecordedLogin
+}
+
+"The fields and values that are returned after creating a request cookie."
+type CreateSiteRequestCookiePayload {
+  "The created request cookie."
+  request_cookie: RequestCookie!
+}
+
+"The fields and values that are returned after creating a request header."
+type CreateSiteRequestHeaderPayload {
+  "The created request header."
+  request_header: RequestHeader!
+}
+
+"The fields and values that are returned after creating a new tag."
+type CreateTagPayload {
+  "The newly created tag."
+  tag: Tag!
+}
+
+"""
+Part of an HTTP request or response that is not highlighted by Burp Scanner. This segment provides contextual information but does not directly contain the insertion point or reflected data in which the issue was identified.
+"""
+type DataSegment {
+  data_html: String
+}
+
+"""
+The fields and values that are returned after revoking the authorization of an agent machine.
+"""
+type DeauthorizeAgentPayload {
+  "The unique identifier of the agent machine whose authorization was successfully revoked."
+  id: ID
+}
+
+"The fields and values that are returned after deleting an agent pool."
+type DeleteAgentPoolPayload {
+  "The unique identifier of the agent pool that was deleted."
+  id: ID
+}
+
+"The fields and values returned when you delete an BCheck from a library."
+type DeleteBCheckPayload {
+  "The unique identifier of the deleted BCheck."
+  id: ID!
+}
+
+"""
+The fields and values that are returned after deleting a site for a CI-driven scan.
+"""
+type DeleteCidsSitePayload {
+  "The unique identifier of the site for a CI-driven scan that was deleted."
+  id: ID
+}
+
+"The fields and values returned when you delete an extension from a library."
+type DeleteExtensionPayload {
+  "The unique identifier of the deleted extension."
+  id: ID!
+}
+
+"""
+The fields and values that are returned after deleting a recipient of scan completion reports for this folder.
+"""
+type DeleteFolderEmailRecipientPayload {
+  "The unique identifier of the recipient that was deleted."
+  id: ID
+}
+
+"The fields and values that are returned after deleting a folder."
+type DeleteFolderPayload {
+  "The unique identifier of the folder that was deleted."
+  id: ID
+}
+
+"""
+The fields and values that are returned after deleting a platform authentication.
+"""
+type DeleteFolderPlatformAuthenticationPayload {
+  "The unique identifier for the deleted platform authentication."
+  id: ID!
+}
+
+"The fields and values that are returned after deleting a proxy from a folder"
+type DeleteFolderProxyPayload {
+  "The unique identifier for the deleted platform authentication."
+  id: ID!
+}
+
+"The fields and values that are returned after deleting a request header."
+type DeleteFolderRequestCookiePayload {
+  "The unique identifier for the deleted request header."
+  id: ID!
+}
+
+"The fields and values that are returned after deleting a request header."
+type DeleteFolderRequestHeaderPayload {
+  "The unique identifier for the deleted request header."
+  id: ID!
+}
+
+type DeleteJiraAutomaticRulePayload {
+  deleted: Boolean!
+}
+
+type DeleteJiraManualRulePayload {
+  deleted: Boolean!
+}
+
+"The fields and values that are returned after deleting a scan configuration."
+type DeleteScanConfigurationPayload {
+  "The unique identifier of the scan configuration that was deleted."
+  id: ID
+}
+
+"The fields and values that are returned after deleting a scan."
+type DeleteScanPayload {
+  "The unique identifier of the scan that was deleted."
+  id: ID!
+}
+
+type DeleteScanningMachineAuthenticationTokenPayload {
+  "The token hash of the authentication token that was deleted."
+  token: String!
+}
+
+"The fields and values that are returned after deleting a schedule item."
+type DeleteScheduleItemPayload {
+  "The unique identifier of the schedule item that was deleted."
+  id: ID!
+}
+
+"""
+The fields and values that are returned after deleting a recipient of scan completion reports.
+"""
+type DeleteSiteEmailRecipientPayload {
+  "The unique identifier of the recipient that was deleted."
+  id: ID
+}
+
+"""
+The fields and values that are returned after deleting a set of login credentials for a site.
+"""
+type DeleteSiteLoginCredentialPayload {
+  "The unique identifier for the deleted set of login credentials."
+  id: ID
+}
+
+"The fields and values that are returned after deleting a site."
+type DeleteSitePayload {
+  "The unique identifier of the site that was deleted."
+  id: ID
+}
+
+"""
+The fields and values that are returned after deleting a platform authentication.
+"""
+type DeleteSitePlatformAuthenticationPayload {
+  "The unique identifier for the deleted platform authentication."
+  id: ID!
+}
+
+"The fields and values that are returned after deleting a proxy from a site"
+type DeleteSiteProxyPayload {
+  "The unique identifier for the deleted platform authentication."
+  id: ID!
+}
+
+"""
+The fields and values that are returned after deleting a recorded login sequence for a site.
+"""
+type DeleteSiteRecordedLoginPayload {
+  "The unique identifier for the deleted recorded login sequence."
+  id: ID
+}
+
+"The fields and values that are returned after deleting a request header."
+type DeleteSiteRequestCookiePayload {
+  "The unique identifier for the deleted request header."
+  id: ID!
+}
+
+"The fields and values that are returned after deleting a request header."
+type DeleteSiteRequestHeaderPayload {
+  "The unique identifier for the deleted request header."
+  id: ID!
+}
+
+"The fields and values that are returned after deleting a tag."
+type DeleteTagPayload {
+  "Whether the tag was successfully deleted."
+  successful: Boolean!
+}
+
+"A textual description of evidence for an issue."
+type DescriptiveEvidence {
+  "The name of the descriptive evidence. On the Burp Suite DAST web UI, this is used as the title of the tab that displays this evidence."
+  title: String!
+  "A description of the issue and evidence in HTML format."
+  description_html: String
+}
+
+"""
+An email address that automatically receives a scan report whenever a scan finishes for a given site.
+"""
+type EmailRecipient {
+  "The unique identifier of the email recipient."
+  id: ID!
+  "The email address to which the scan completion report is sent."
+  email: String!
+}
+
+"""
+The fields and values that are returned after enabling or disabling an agent machine.
+"""
+type EnableAgentPayload {
+  "The updated agent machine."
+  agent: Agent
+}
+
+"An enabled endpoint."
+type EnabledEndpoint {
+  id: ID!
+}
+
+type EphemeralAgent {
+  id: ID!
+  name: String
+  node_name: String
+  job_status: String
+  pod_status: String
+  scan_id: String
+  start_time: Timestamp
+  site_name: String
+  scan_status: ScanStatus
+}
+
+"""
+This describes an extension, could be custom or a BApp. BApps will have bapp_details.
+"""
+type Extension {
+  "The unique identifier of the extension."
+  id: ID
+  "The filename provided when the extension was uploaded."
+  uploaded_filename: String!
+  name: String!
+  "The description of the extension."
+  description: String!
+  "The date the extension was uploaded."
+  uploaded_date: Timestamp!
+  "The user who uploaded the extension."
+  uploaded_by: String
+  "The details of the extensions. Only present if the extension is a BApp."
+  bapp_details: BappDetails
+}
+
+"A change to the false positive status of an issue."
+type FalsePositiveIssueChange {
+  "Whether an issue was marked (true) or unmarked (false) as a false positive."
+  false_positive: Boolean
+}
+
+type FeaturedScanConfiguration {
+  id: ID!
+  name: String
+  description: String
+  icon_svg: String
+}
+
+type FetchAndParseApiDefinitionUrlPayload {
+  message: String
+  status_code: Int
+  parsed_api_definition: ParsedApiDefinition
+}
+
+"The file that contains the API definitions."
+type FileBasedApiDefinition {
+  "The filename of the file where the API definitions are listed."
+  filename: String!
+  "The filename of the environment file used when uploading a Postman collection."
+  environment_filename: String
+  "The output from parsing the API definition"
+  parsed_api_definition: ParsedApiDefinition!
+  "A list of the API authentication credentials (for example: Basic, Bearer Token, API Key)."
+  authentications: [ApiAuthentication!]!
+  "A list of the API endpoints."
+  enabled_endpoints: [EnabledEndpoint!]!
+}
+
+"""
+A folder in the site tree. Folders can contain both sites and subfolders. You can use folders to organize the site tree into any kind of hierarchical structure. You can also restrict user permissions on the folder level.
+"""
+type Folder {
+  "The unique identifier of the folder."
+  id: ID!
+  "The name of the folder. This is the name that appears on the Burp Suite DAST web UI. Note that the name of a folder must be unique within its parent folder."
+  name: String!
+  "The description of the folder."
+  description: String
+  "The unique identifier of the folder that is the parent of this folder in the site tree hierarchy. A parent ID of 0 indicates that this folder is on the root level."
+  parent_id: ID
+  "A list of the scan configurations that you want to use for scan of the sites in this folder and its subfolders."
+  scan_configurations: [ScanConfiguration!]
+  "The extensions assigned to the sites and subfolders in this folder."
+  extensions: [Extension!]
+  "The BChecks assigned to the sites and subfolders in this folder."
+  bchecks: [BCheck!]
+  "A list of all the email addresses that are sent scan reports for the sites that are in this folder and its subfolders."
+  email_recipients: [EmailRecipient!]
+  "The information about Slack notifications for this folder."
+  slack_channels: [SlackChannel!]
+  "Settings that have been applied to this folder."
+  settings: FolderSettings
+  "The tags associated with this folder."
+  tags: [Tag!]
+}
+
+"Folder settings for a folder."
+type FolderSettings {
+  "The list of request headers for a folder."
+  request_headers: [RequestHeader!]
+  "The list of request cookies for a folder."
+  request_cookies: [RequestHeader!]
+  "The list of platform authentications for a folder."
+  platform_authentication: [PlatformAuthentication!]
+  "The list of proxies for a folder."
+  proxies: [Proxy!]
+}
+
+type ForwardPropagationSettings {
+  false_positive: ForwardPropagationMode
+  severity: ForwardPropagationMode
+  accepted_risk: ForwardPropagationMode
+}
+
+type GenerateScimTokenPayload {
+  token: String!
+}
+
+"An BCheck that generated an issue."
+type GeneratedByBCheck {
+  "The name of the BCheck that generated the issue."
+  name: String!
+}
+
+"An extension that generated an issue."
+type GeneratedByExtension {
+  "The name of the extension that generated the issue."
+  name: String!
+}
+
+"A GitLab issue that is linked to an issue found by a scan."
+type GitLabIssue {
+  "An identifier for the GitLab issue."
+  id: ID!
+  "An identifier for the GitLab project."
+  project_id: ID!
+  "The details of the GitLab issue."
+  issue_details: GitLabIssueDetails
+}
+
+type GitLabIssueDetails {
+  "Title of the GitLab issue."
+  title: String
+  "State of the GitLab issue."
+  state: GitLabIssueState
+}
+
+"GitLab issue details."
+type GitLabIssuePayload {
+  id: ID!
+  title: String!
+  state: GitLabStateType!
+  url: String!
+  project_id: ID!
+}
+
+"GitLab note details."
+type GitLabNotePayload {
+  body: String!
+}
+
+"A GitLab project."
+type GitLabProject {
+  "The id of the GitLab project."
+  id: ID!
+  "The name of the GitLab project."
+  name: String!
+}
+
+"A GitLab project link."
+type GitLabProjectLink {
+  "A GitLab project."
+  project: GitLabProject!
+  "A GitLab issue type."
+  issue_type: GitLabIssueType!
+}
+
+"GitLab projects that can have issues created."
+type GitLabProjects {
+  "The GitLab projects that can have issues created for a site."
+  projects: [GitLabProject!]!
+}
+
+"The GitLab settings."
+type GitLabSettings {
+  "GitLab server URL."
+  url: String!
+  "GitLab project links."
+  project_links: [GitLabProjectLink!]!
+  auto_gitlab_settings: AutomaticGitLabSettings
+  auto_create_enabled: Boolean!
+}
+
+type GlobalConcurrentScanSettingsPayload {
+  global_scan_throttle_enabled: Boolean
+  global_scans_enabled: Boolean
+  global_max_concurrent_scans: Int
+}
+
+"""
+A list of scan settings for a site or folder. The list includes scan settings inherited from parent folders.
+"""
+type HierarchicalScanSettings {
+  settings: [ScanSettings]!
+}
+
+"""
+Part of an HTTP request or response that is highlighted by Burp Scanner because it contains evidence for an issue. For example, this could be an injected payload that is being reflected in the response.
+"""
+type HighlightSegment {
+  highlight_html: String
+}
+
+"An HTTP interaction between the target site and the Burp Collaborator server."
+type HttpInteraction {
+  "The label for the HTTP interaction."
+  title: String!
+  "The description of the interaction, as displayed in the issue results."
+  description_html: String
+  "The HTTP request that triggered the interaction with the Collaborator server."
+  request: [RequestResponseSegment]
+  "The HTTP response that was returned following the interaction with the Collaborator server."
+  response: [RequestResponseSegment]
+}
+
+"Provides the installer download link for each operating system"
+type InstallerLinks {
+  windows: String!
+  linux: String!
+}
+
+"""
+A potential security vulnerability that has been identified on one of your sites by a scan.
+"""
+type Issue {
+  "The type of issue that was found by a scan, for example, an SQL injection vulnerability."
+  issue_type: IssueType
+  "Indicates how confident Burp Scanner is that the identified issue is a genuine vulnerability. This reflects the inherent reliability of the technique that was used to identify the issue."
+  confidence: Confidence!
+  "The confidence that was manually set by a user. At the moment, this can only be used to mark an issue as a false positive."
+  display_confidence: Confidence @deprecated(reason: "Replaced by confidence/original confidence")
+  "The original confidence of the issue as reported by the scanner."
+  original_confidence: Confidence
+  "A unique identifier for the individual instance of the issue."
+  serial_number: ID!
+  "Indicates how dangerous the identified issue is. The higher the severity level, the larger the impact is likely to be if an attacker is able to exploit this vulnerability."
+  severity: Severity!
+  "The original severity of the issue as reported by the scanner."
+  original_severity: Severity!
+  "Indicates whether the issue has been marked as accepted risk."
+  accepted_risk: Boolean!
+  "A description of this occurrence of the issue, including information about how it arose and how it could potentially be exploited by an attacker."
+  description_html: String
+  "A brief overview of measures you can take to try and resolve this issue."
+  remediation_html: String
+  "The URL path at which the issue was found, excluding the query string."
+  path: String!
+  "The host on which the issue was found."
+  origin: String!
+  "Indicates this issue's relationship to the results of the previous scan, for example, whether this is a new issue that was not identified by the previous scan."
+  novelty: Novelty
+  "A list of evidence that the scan found for the issue, such as the HTTP request and response that can be exploited."
+  evidence: [Evidence!]
+  "A list of tickets that are linked to this issue. Note that this is only applicable if you have configured the integration between Burp Suite DAST and Jira using the REST API."
+  tickets: [Ticket!]
+  "The extension that generated the issue, if there is one."
+  generated_by_extension: GeneratedByExtension
+  "The BCheck that generated the issue, if there is one."
+  generated_by_bcheck: GeneratedByBCheck
+  "Note submitted when the issue was marked as a false positive."
+  false_positive_note: String @deprecated(reason: "Replaced by change_history")
+  "Timestamp when the issue was marked as a false positive."
+  false_positive_timestamp: Timestamp @deprecated(reason: "Replaced by change_history")
+  "Name of the user who marked the issue as a false positive."
+  false_positive_username: String @deprecated(reason: "Replaced by change_history")
+  "A unique identifier for the issue that can be used to track it across scans."
+  fingerprint: String
+  "Change history for this issue"
+  change_history: [IssueChangeHistory!]
+}
+
+"Details of the change to an issue."
+type IssueChangeHistory {
+  "Note submitted when the issue was changed."
+  note: String
+  "Timestamp when the issue was changed."
+  timestamp: String
+  "Name of the user who changed the issue."
+  username: String
+  "Which change was made to the issue"
+  issue_change: IssueChange
+}
+
+"""
+Exposes information about the number of issues found, sorted their severity level.
+"""
+type IssueCounts {
+  "The total number of issues found."
+  total: Int!
+  "The number of high-severity issues found, along with Burp Scanner's confidence level."
+  high: CountsByConfidence!
+  "The number of medium-severity issues found, along with Burp Scanner's confidence level."
+  medium: CountsByConfidence!
+  "The number of low-severity issues found, along with Burp Scanner's confidence level."
+  low: CountsByConfidence!
+  "The number of issues found that are displayed for information only, along with Burp Scanner's confidence level."
+  info: CountsByConfidence!
+}
+
+"Exposes basic information about an issue type that was found by a scan."
+type IssueType {
+  "A unique identifier for the issue type. This is valid across all Burp products."
+  type_index: ID!
+  "A text description of the issue type."
+  name: String
+  "A description of this occurrence of the issue, including information about how it arose and how it could potentially be exploited by an attacker."
+  description_html: String
+  "A brief overview of measures you can take to try and resolve this issue."
+  remediation_html: String
+  "Vulnerability classifications from the Common Weakness Enumeration collection that are related to this issue type."
+  vulnerability_classifications_html: String
+  "Additional resources containing information related to this issue type."
+  references_html: String
+}
+
+"""
+Exposes basic information about instances of an issue type that was found by a scan.
+"""
+type IssueTypeGroup {
+  "The type of issue that was found by a scan, for example, a SQL injection vulnerability."
+  issue_type: IssueType
+  "The level of confidence that an issue that was identified is a genuine vulnerability. This reflects the inherent reliability of the technique that was used by Burp Scanner to identify the issue."
+  confidence: Confidence!
+  "The level of severity for an issue that was found by a scan. The higher the severity level, the larger the impact is likely to be if an attacker is able to exploit this vulnerability. Note that the severity level is only a rough approximation based on a typical website. You should use your knowledge of the purpose and context of the associated functionality to determine how serious each issue is in your individual case."
+  severity: Severity!
+  "Indicates whether the issue has been marked as accepted risk."
+  accepted_risk: Boolean!
+  "The number of instances of this issue type that were found by a scan."
+  number_of_children: Int!
+  "The unique identifier of the first instance of this issue type that was found by a scan."
+  first_child_serial_number: ID
+  "The issue's relationship to the results of the previous scan. This data is used to track how your security posture is changing over time."
+  novelty: Novelty
+  "The number of Jira tickets that have been created for issues found by this scan."
+  jira_ticket_count: Int
+  "The number of GitLab issues that have been created for issues found by this scan."
+  gitlab_issue_count: Int
+  "The number of Trello cards that have been created for issues found by this scan."
+  trello_card_count: Int
+}
+
+type JiraAutomaticRule {
+  id: ID!
+  name: String!
+  severities: [Severity!]!
+  confidences: [Confidence!]!
+  site_ids: [ID!]!
+  folder_ids: [ID!]!
+  description: String
+  project: JiraProject!
+  ticket_type: JiraTicketType!
+  parent: JiraParent
+  custom_fields: [JiraCustomField!]
+}
+
+type JiraAutomaticRulePayload {
+  rule: JiraAutomaticRule!
+}
+
+type JiraCredentials {
+  url: String!
+  username: String!
+}
+
+type JiraCustomField {
+  id: ID!
+  type: String!
+  value: String!
+}
+
+type JiraManualRule {
+  id: ID!
+  name: String!
+  description: String
+  project: JiraProject!
+  ticket_type: JiraTicketType!
+  parent: JiraParent
+  custom_fields: [JiraCustomField!]
+}
+
+type JiraManualRulePayload {
+  rule: JiraManualRule!
+}
+
+type JiraParent {
+  id: ID!
+  name: String!
+}
+
+type JiraProject {
+  id: ID!
+  name: String!
+}
+
+type JiraProjectDetails {
+  id: ID!
+  name: String!
+}
+
+type JiraProjectInfo {
+  ticket_types: [JiraTicketTypeWithHierarchy!]!
+}
+
+type JiraProjects {
+  projects: [JiraProjectDetails!]!
+}
+
+"A Jira ticket that is linked to an issue found by a scan."
+type JiraTicket {
+  "A unique identifier for the Jira ticket."
+  id: ID!
+  "The Jira issue key."
+  external_key: String
+  "The name of the ticket type in Jira that this ticket belongs to.
+Jira calls this "Issue Type" but we use "ticket" to avoid confusion with Burp Scanner issues."
+  issue_type: String @deprecated(reason: "Use the ticket_type field instead")
+  "The name of the ticket type in Jira that this ticket belongs to.
+Jira calls this "Issue Type" but we use "ticket" to avoid confusion with Burp Scanner issues."
+  ticket_type: String
+  "A brief description of the issue."
+  summary: String
+  "The Jira project to which this ticket belongs."
+  project: String
+  "The current status of the Jira ticket."
+  status: String
+  "The priority of the Jira ticket."
+  priority: String
+}
+
+"""
+An item that represents a Jira Ticket Field. This is used to describe the field types and requirements for raising Jira tickets.
+"""
+type JiraTicketField {
+  "A unique identifier for the Jira Ticket Field."
+  id: ID!
+  "The display name for the Jira Ticket Field."
+  name: String!
+  "The type of the Jira Ticket Field."
+  type: String!
+  "Whether the Jira Ticket Field is an array of values."
+  array: Boolean!
+  "Whether the Jira Ticket Field is required."
+  required: Boolean!
+  "Whether the Jira Ticket Field Type is supported."
+  supported: Boolean!
+  "The allowedValues of the Jira Ticket Field."
+  allowed_values: [JiraTicketFieldAllowedValue!]!
+}
+
+type JiraTicketFieldAllowedValue {
+  "The unique identifier of the allowed value."
+  id: ID!
+  "The display name of the allowed value."
+  value: String!
+}
+
+type JiraTicketFieldListResult {
+  "The list of Jira Ticket Fields."
+  fields: [JiraTicketField!]!
+}
+
+"Jira ticket details."
+type JiraTicketPayload {
+  "The external ID for the Jira ticket."
+  id: String!
+  "The external key for the Jira ticket."
+  key: String!
+}
+
+type JiraTicketSearchResult {
+  key: String!
+  summary: String!
+}
+
+type JiraTicketSearchResults {
+  tickets: [JiraTicketSearchResult!]!
+}
+
+type JiraTicketType {
+  id: ID!
+  name: String!
+}
+
+type JiraTicketTypeWithHierarchy {
+  id: ID!
+  name: String!
+  hierarchy_level: Int!
+}
+
+type LiveCIDScan {
+  agent_id: ID!
+  scan_id: ID!
+  scan_status: ScanStatus!
+  start_time: Timestamp!
+  site_name: String!
+}
+
+"""
+A set of login credentials associated with a site. This set of credentials is used by scans to crawl areas of the site that are only accessible to registered users. Note that login credentials are not automatically synced with the user account on the actual website. If, for example, the password is changed, you need to manually update the login credentials in Burp Suite DAST to reflect this.
+"""
+type LoginCredential {
+  "The unique identifier of the set of login credentials."
+  id: ID!
+  "A name for the set of login credentials to help you identify it."
+  label: String
+  "The username that the Burp Scanner should use to log in to the site."
+  username: String
+  "The password that the Burp Scanner should use to log in to the site."
+  password: String
+}
+
+type MachineToken {
+  "The unique identifier of the token"
+  id: ID
+  "The name of the token"
+  name: String!
+  "The time the token was created"
+  timestamp: Timestamp
+  "The hash of the token"
+  token_hash: String
+  "The number of machines connected using this token"
+  machine_count: Int
+  "Indicates whether any machines using this token have scans running"
+  has_running_scans: Boolean
+}
+
+"""
+The fields and values that are returned after marking an issue as a false positive.
+"""
+type MarkFalsePositivePayload {
+  "Indicates whether the false positive was successfully updated."
+  successful: Boolean
+}
+
+"The fields and values that are returned after moving an agent to an agent pool."
+type MoveAgentPoolPayload {
+  "The updated agent machine."
+  agent: Agent
+}
+
+"""
+The fields and values that are returned after moving a site for a CI-driven scan to a new location in the site tree.
+"""
+type MoveCidsSitePayload {
+  "The site for a CI-driven scan that was moved."
+  cids_site: CidsSite!
+}
+
+"""
+The fields and values that are returned after moving a folder to a new location in the site tree.
+"""
+type MoveFolderPayload {
+  "The folder that was moved."
+  folder: Folder!
+}
+
+"""
+The fields and values that are returned after moving a site to a new location in the site tree.
+"""
+type MoveSitePayload {
+  "The site that was moved."
+  site: Site
+}
+
+"An OpenAPI endpoint."
+type OpenApiEndpoint {
+  "The ID used to reference this endpoint"
+  id: ID!
+  "The API endpoint hostname."
+  host: String!
+  "The API endpoint path and query."
+  path: String!
+  "The API endpoint HTTP method (for example: 'GET', 'POST')."
+  method: String!
+  "The API endpoint content type (for example: 'application/json')."
+  content_type: String
+}
+
+"""
+The parsed API definitions include supported authentication schemes and API endpoints from an API definition file.
+These definitions can be used when creating a new site or updating an existing one.
+Note that no credentials are included for any authentication schemes, as the API definition file should not contain credentials.
+Any required credentials can be provided by the user based on the specific authentication scheme in use.
+"""
+type ParsedOpenApiDefinition {
+  "A list of the API authentication schemes (for example: Basic, Bearer Token, API Key)."
+  authentication_schemes: [ApiAuthenticationWithoutCredentials!]!
+  "A list of the API endpoints."
+  endpoints: [OpenApiEndpoint!]!
+}
+
+"""
+These definitions can be used when creating a new site or updating an existing one.
+"""
+type ParsedPostmanCollection {
+  requests: [PostmanRequest!]!
+  authentication_schemes: [ApiAuthenticationWithoutCredentials!]!
+  credentials: [ApiAuthenticationCredentials!]!
+}
+
+"""
+These definitions can be used when creating a new site or updating an existing one.
+"""
+type ParsedSoapDefinition {
+  endpoints: [SoapEndpoint!]!
+}
+
+"The fields and values that are returned after pausing a scan."
+type PauseScanPayload {
+  "The unique identifier of the scan that was paused."
+  id: ID
+}
+
+type PlatformAuthentication {
+  id: ID!
+  destination_host: String!
+  type: PlatformAuthenticationType!
+  username: String
+  password: String
+  domain: String
+  domain_hostname: String
+}
+
+"A request that has been imported from Postman."
+type PostmanRequest {
+  "The ID used to reference this request"
+  id: ID!
+  "The HTTP method used for this request"
+  method: String!
+  "The request hostname. If any variables are used in the request URL, they will be substituted with values from the collection."
+  interpolated_host: String!
+  "The request path and query. If any variables are used in the request URL, they will be substituted with values from the collection."
+  interpolated_path: String
+  "The Request name."
+  name: String!
+  "The request content type (for example: 'application/json')."
+  content_type: String
+}
+
+"""
+A pre-scan check of one of your sites using the embedded Burp Scanner.  A pre-scan check object is created in response to create_pre_scan_check.
+"""
+type PreScanCheck {
+  id: ID!
+  "The time the pre-scan check was created."
+  created_time: Timestamp!
+  "The time the pre-scan check started."
+  start_time: Timestamp
+  "The time the pre-scan check completed."
+  end_time: Timestamp
+  "The status of the pre-scan check."
+  status: PreScanCheckStatus!
+  "The results of the pre-scan check."
+  results: [PreScanCheckResult!]!
+  "The recorded login replay information generated by the pre-scan check."
+  recorded_logins: RecordedLoginReplayResults
+  "A number that indicates why a pre-scan check failed."
+  scan_failure_code: Int
+  "A message that provides information about why a pre-scan check failed."
+  scan_failure_message: String
+}
+
+"The results of the pre-scan check."
+type PreScanCheckResult {
+  "The json results of the pre-scan check."
+  result_json: String!
+}
+
+type Proxy {
+  id: ID!
+  destination_host: String!
+  proxy_host: String!
+  proxy_port: Int!
+  authentication_type: ProxyAuthenticationType!
+  username: String
+  password: String
+  domain: String
+  domain_hostname: String
+}
+
+type Questionnaire {
+  questionnaire_id: Int
+  questions: String
+}
+
+"""
+A recorded login sequence associated with a site. These are essentially JSON-based scripts that you generate by recording yourself performing the login in your browser using the Burp Suite Navigation Recorder extension. During the scan, Burp Scanner will use this script to replecate your actions and perform the full login sequence from scratch. This enables scans to handle more complex login mechanisms, such as single sign-on, in order to crawl areas of the site that are only accessible to registered users. Note that a recorded login sequence is not automatically synced with the user account on the actual website. If, for example, the password has changed for the account that you used during recording, you need to update the recording in Burp Suite DAST to reflect this.
+"""
+type RecordedLogin {
+  "The unique identifier of the recorded login sequence."
+  id: ID!
+  "A name for the recorded login sequence to help you identify it."
+  label: String
+  "The JSON-based script for the recorded login sequence. This is generated by the Burp Suite Navigation Recorder extension when you record the login sequence in your browser."
+  script: String
+  "Optional authentication status check configuration."
+  authenticationStatusCheck: AuthenticationStatusCheck
+}
+
+type RecordedLoginReplayImage {
+  index: Int!
+  timestamp: Timestamp!
+  url: String!
+}
+
+type RecordedLoginReplayResult {
+  label: String!
+  failure_message: String
+  failure_code: Int!
+  images: [RecordedLoginReplayImage!]!
+  "A list of responses that the status check matches against. Will usually be a single response, but includes any redirect responses."
+  status_check_responses: [RequestResult!]
+  "A screenshot of the browser at the URL specified on the authentication status check."
+  status_check_screenshot: String
+}
+
+type RecordedLoginReplayResults {
+  images_available: Boolean!
+  results: [RecordedLoginReplayResult!]!
+}
+
+"The fields and values that are returned after removing tags from nodes."
+type RemoveTagsFromNodesPayload {
+  successful: Boolean!
+}
+
+"The fields and values that are returned after renaming an agent machine."
+type RenameAgentPayload {
+  "The updated agent machine."
+  agent: Agent
+}
+
+"""
+The fields and values that are returned after renaming a site for a CI-driven scan.
+"""
+type RenameCidsSitePayload {
+  "The renamed site for a CI-driven scan."
+  cids_site: CidsSite!
+}
+
+"The fields and values that are returned after renaming a folder."
+type RenameFolderPayload {
+  "The renamed folder."
+  folder: Folder!
+}
+
+type RenameScanningMachineAuthenticationTokenPayload {
+  "The token hash of the authentication token."
+  token_hash: String!
+  "The new authentication token name"
+  name: String!
+}
+
+"The fields and values that are returned after renaming a site."
+type RenameSitePayload {
+  "The renamed site."
+  site: Site!
+}
+
+"An HTTP request in which an issue was identified."
+type Request {
+  "The index of the request in the context of all requests that were sent."
+  request_index: Int
+  "Indicates the order of the request in cases where multiple requests (and requests and responses) are chained together to demonstrate an issue. For example, the second request in the sequence would have the count '2'. This is displayed on the Burp Suite DAST web UI as 'Request 2'."
+  request_count: Int
+  "A list of segments of the request."
+  request_segments: [RequestResponseSegment]
+}
+
+type RequestCookie {
+  "The unique identifier of the request cookie."
+  id: ID
+  "The name of the cookie."
+  name: String!
+  "The value of the cookie."
+  value: String!
+  "The scope of the cookie."
+  scope_prefix: String
+}
+
+type RequestHeader {
+  "The unique identifier of the request header."
+  id: ID
+  "The name of the request header."
+  name: String!
+  "The value of the request header."
+  value: String!
+  "The scope of the request header."
+  scope_prefix: String
+}
+
+type RequestResult {
+  "The URL that was requested."
+  request_url: String
+  "The HTTP response status code from the application (e.g., "200", "404"), if a response was received."
+  http_response_code: String
+  "The HTTP response status message from the application (e.g., "OK", "Not Found"), if a response was received."
+  http_response_message: String
+  "The full HTTP request that was sent."
+  http_request: String
+  "The full HTTP response that was received, if any."
+  http_response: String
+}
+
+type ResetMfaBackupCodesPayload {
+  "List of fressh backup codes"
+  totp_backup_codes: [BackupCode!]!
+}
+
+type ResetMfaSecretPayload {
+  "Indicates whether the payload was successfully updated"
+  successful: Boolean
+}
+
+"An HTTP response in which an issue was identified."
+type Response {
+  "The index of the response in the context of all the responses that were received."
+  response_index: Int
+  "Indicates the order of the response in cases where multiple requests (and requests and responses) are chained together to demonstrate an issue. For example, the second response in the sequence would have the count '2'. This is displayed on the Burp Suite DAST web UI as 'Response 2'."
+  response_count: Int
+  "A list of segments of the response."
+  response_segments: [RequestResponseSegment]
+}
+
+"The fields and values that are returned after resuming a scan."
+type ResumeScanPayload {
+  "The unique identifier of the scan that was resumed."
+  id: ID
+}
+
+"""
+A scan of one of your sites using the embedded Burp Scanner. A Scan object is created based on the associated schedule item when the scan is due to start.
+"""
+type Scan {
+  "The unique identifier for the scan."
+  id: ID!
+  "The schedule item from which this scan was created."
+  schedule_item: ScheduleItem
+  "Describes the target for this scan."
+  scan_target: ScanTarget!
+  "The unique identifier of the site that is being scanned."
+  site_id: ID! @deprecated(reason: "Use the scan_target.id field instead")
+  "The name of the site that is being scanned."
+  site_name: String @deprecated(reason: "Use the scan_target.name field instead")
+  "The time at which the scan was schedule to start."
+  scheduled_start_time: Timestamp
+  "The time at which the scan started."
+  start_time: Timestamp
+  "The time at which the scan finished."
+  end_time: Timestamp
+  "The time at which the scan was paused, if it has ever been paused."
+  paused_time: Timestamp
+  "The total time the scan took to run."
+  duration_in_seconds: Long
+  "The estimated time for the scan to run, if available."
+  estimated_duration_in_seconds: Long
+  "The current status of the scan, for example, whether the scan is currently running, has finished, or failed."
+  status: ScanStatus
+  "The agent machine used to perform the scan."
+  agent: Agent
+  "A collection of metrics that provide details of a scan's progress, such as how many requests it has made."
+  scan_metrics: ScanProgressMetrics
+  "A number that indicates why a scan failed."
+  scan_failure_code: Int
+  "A message that provides information about why a scan failed."
+  scan_failure_message: String
+  "A message that provides more information about what caused a scan failure."
+  scan_failure_cause: String
+  "A message that provides information about how to resolve a scan failure."
+  scan_failure_remedy: String
+  "Indicates the method in which the scan was initiated."
+  generated_by: GeneratedBy
+  "The version of Burp Scanner used to perform this scan."
+  scanner_version: String
+  "The version of Burp Scanner used to perform this scan."
+  scanner_build_number: Int
+  "A list of scan configurations that were used for this scan."
+  scan_configurations: [ScanConfiguration!]
+  "Provides a list of extensions that were used for the scan."
+  extensions: [Extension!]
+  "Provides a list of BChecks that were used for the scan."
+  bchecks: [BCheck!]
+  "Provides information about how the number of issues has changed in relation to the previous scan, such as how many new issues have been found."
+  scan_delta: ScanDelta
+  "The number of Jira tickets that have been created for issues found by this scan."
+  jira_ticket_count: Int
+  "The number of GitLab issues that have been created for issues found by this scan."
+  gitlab_issue_count: Int
+  "The number of Trello cards that have been created for issues found by this scan."
+  trello_card_count: Int
+  "A list of issues that were found during this scan, grouped by their issue type."
+  issue_type_groups(
+    severities: [Severity]
+    confidences: [Confidence]
+    novelties: [Novelty]
+    accepted_risks: [Boolean]
+  ): [IssueTypeGroup!]
+  "Provides information about the number of issues found, sorted their severity level."
+  issue_counts: IssueCounts
+  "A list of audit items that have been identified during the scan."
+  audit_items(sort_column: AuditItemSortColumn, sort_order: SortOrder): [AuditItem!]
+  "A specific audit item that has been identified by the scan."
+  audit_item(id: ID!): AuditItem
+  "A combined list of crawl and audit items."
+  scanned_items: [ScannedItem]
+  "The site scope used for the scan."
+  scope_v2: ScopeV2!
+  "The API definition file filename or hosted URL."
+  api_definitions: [ApiFilenameUrl!]!
+  "All the application logins that are associated with this site. These can either be basic sets of login credentials or scripts of full login sequences that you recorded with the Burp Suite Navigation Recorder browser extension. These are used by scans to crawl areas of the site that are only accessible to registered users."
+  site_application_logins: ApplicationLogins!
+  "All the saved application logins associated with the schedule item from which this scan was created. These can either be basic sets of login credentials or scripts of full login sequences that you recorded with the Burp Suite Navigation Recorder browser extension. These are used by scans to crawl areas of the site that are only accessible to registered users."
+  schedule_item_application_logins: ApplicationLogins!
+  "A list of issues that have been found by the scan."
+  issues(
+    type_index: ID
+    start: Int!
+    count: Int!
+    severities: [Severity]
+    confidences: [Confidence]
+    novelties: [Novelty]
+    accepted_risks: [Boolean]
+  ): [Issue!]
+  "Any warnings about the scan."
+  warnings: ScanWarnings
+  "Additional debug information, for internal use only."
+  debug: ScanDebugInfo
+  "Settings for a site."
+  settings: SiteSettings
+}
+
+"""
+A scan configuration controls various settings that determine how a scan is performed, such as the maximum link depth of the crawl, what types of issues to report, and the maximum time that a scan will run.
+"""
+type ScanConfiguration {
+  "The unique identifier for the scan configuration."
+  id: ID!
+  "The name of the scan configuration. This is the name that is displayed on the Burp Suite DAST web UI."
+  name: String
+  "The actual content of the scan configuration in JSON format."
+  scan_configuration_fragment_json: String
+  "Indicates whether this scan configuration is a built-in configuration delivered with Burp Suite DAST or a custom scan configuration imported by a user."
+  built_in: Boolean
+  "The time at which this scan configuration was last changed."
+  last_modified_time: Timestamp
+  "The user who last made changes to this scan configuration."
+  last_modified_by: User
+}
+
+"The total number of scans, sorted their current status."
+type ScanCountsByStatus {
+  "The number of scans that are currently scheduled but have not yet started."
+  scheduled: Int!
+  "The number of scans that are due to start but are waiting for a free agent to perform them."
+  queued: Int!
+  "The number of scans that are currently in progress."
+  running: Int!
+  "The number of scans that have been successfully completed."
+  succeeded: Int!
+  "The number of scans that have been cancelled before they could finish."
+  cancelled: Int!
+  "The number of scans that were unable to finish due to errors."
+  failed: Int!
+}
+
+type ScanDebugInfo {
+  project_file_available: Boolean
+}
+
+"""
+Exposes information about how the number of issues has changed in relation to the previous scan.
+"""
+type ScanDelta {
+  "The number of issues found by the most recent scan that were not found by the previous scan."
+  new_issue_count: Int!
+  "The number of issues found by the most recent scan that were also found by the previous scan."
+  repeated_issue_count: Int!
+  "The number of issues that were found in an earlier scan, were identified as being resolved by the previous scan, but have now reappeared in the most recent scan."
+  regressed_issue_count: Int!
+  "The number of issues that were found by the previous scan but were no longer found by the most recent scan."
+  resolved_issue_count: Int!
+}
+
+type ScanEventLog {
+  entries: [ScanEventLogEntry!]!
+}
+
+type ScanEventLogEntry {
+  type: ScanEventLogType!
+  scanner_message_id: Int
+  message: String!
+  cause: String
+  remediation: String
+  timestamp: Timestamp!
+  duplicate_count: Int!
+}
+
+"A collection of metrics that provide details of a scan's progress."
+type ScanProgressMetrics {
+  "The number of HTTP requests made by the scan during the crawl phase."
+  crawl_request_count: Int!
+  "The number of unique URLs visited by the scan during the crawl phase."
+  unique_location_count: Int!
+  "The number of HTTP requests made by the scan during the audit phase."
+  audit_request_count: Int!
+  "The number of audit queue items waiting to be audited."
+  audit_queue_items_waiting: Int!
+  "The current progress of the scan, expressed as a percentage."
+  crawl_and_audit_progress_percentage: Int!
+  "The current phase of the scan."
+  scan_phase: ScanPhase
+  "The time that the audit phase of the scan began."
+  audit_start_time: Timestamp
+  "The current URL that is being crawled or audited."
+  current_url: String
+}
+
+"A downloadable report providing information about the scan and its results."
+type ScanReport {
+  "The content of the scan report in HTML format."
+  report_html: String
+  "The content of the scan report in PDF format, encoded as base64."
+  report_pdf: String
+  "Any warning that should be noted before the report is downloaded."
+  warning: String
+}
+
+"""
+Scan settings for a site or folder. It does not include scan settings inherited from parent folders.
+"""
+type ScanSettings {
+  site_or_folder_id: ID!
+  site_or_folder_name: String!
+  scan_configurations: [ScanConfiguration!]!
+  extensions: [Extension!]!
+  bchecks: [BCheck!]!
+  email_recipients: [EmailRecipient!]!
+  slack_channels: [SlackChannel!]!
+  platform_authentication: [PlatformAuthentication!]!
+  request_headers: [RequestHeader!]!
+  request_cookies: [RequestHeader!]!
+  proxies: [Proxy!]!
+}
+
+type ScanSeverityCounts {
+  scan_id: ID!
+  end_time: Timestamp!
+  high: Int!
+  info: Int!
+  low: Int!
+  medium: Int!
+}
+
+"""
+A scan target is a representation of the target for a scan - ie - either a site or a CIDS site.
+"""
+type ScanTarget {
+  "The unique identifier for the scan target."
+  id: ID!
+  "The name of the scan target."
+  name: String!
+  "The type of the scan target."
+  type: ScanTargetType!
+  "Indicates whether the site details are available once the scan has completed."
+  ephemeral: Boolean!
+}
+
+type ScanWarnings {
+  primary_warning: String @deprecated(reason: "No longer supported")
+}
+
+"The scheduling information for a schedule item."
+type Schedule {
+  "The time at which the scan is scheduled to start for the first time."
+  initial_run_time: Timestamp!
+  "<p>Determines how frequently the scan runs. This must be specified in RRULE format.</p>
+<p>The structure of the RRULE format is described in <a href="https://tools.ietf.org/html/rfc5545">RFC5545</a>, <a href="https://tools.ietf.org/html/rfc5546">RFC5546</a>, and <a href="https://tools.ietf.org/html/rfc5547">RFC5547</a>.</p>
+<p>For example, the following would run a scan that was scheduled to run once a month on the 19th of the month: <code>FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=19</code></p>
+<p>Run a scan every 10 minutes: <code>FREQ=MINUTELY;INTERVAL=10</code></p>
+<p>Run a scan every 3 hours: <code>FREQ=HOURLY;INTERVAL=3</code></p>
+<p>Run a scan every day <code>FREQ=DAILY;INTERVAL=1</code></p>
+<p>Run a scan every 2 days: <code>FREQ=DAILY;INTERVAL=2</code></p>
+<p>Run a scan every 2 weeks on a Tuesday: <code>FREQ=WEEKLY;INTERVAL=2;BYDAY=TU</code></p>
+<p>Run a scan every 4 weeks on Mondays: <code>FREQ=WEEKLY;INTERVAL=4;BYDAY=MO</code></p>
+<p>Run a scan every 4 weeks on Mondays, Wednesdays and Fridays: <code>FREQ=WEEKLY;INTERVAL=4;BYDAY=MO,WE,FR</code></p>
+<p>Run a scan every 6 months on the 16th day of the Month: <code>FREQ=MONTHLY;INTERVAL=6;BYMONTHDAY=16</code></p>
+<p>Run a scan every 6 months on the 3rd Wednesday: <code>FREQ=MONTHLY;INTERVAL=6;BYDAY=3WE</code></p>
+<p>The above rules can be combined with limits of an absolute number of scans and/or scanning until a set date:</p>
+<p>Run a scan every day, until it has been done 10 times: <code>FREQ=DAILY;COUNT=10;INTERVAL=1</code></p>
+<p>Run a scan every hour until 2021-01-01 10:00: <code>FREQ=HOURLY;UNTIL=20210101T100400Z;INTERVAL=1</code></p>"
+  rrule: String
+  "The name of the schedule"
+  name: String
+  "The description of the schedule"
+  description: String
+}
+
+"""
+Exposes all of the scheduling data about a configured scan, such as the time and date when the scan is scheduled to run, and how frequently. When a scheduled scan is due to start, a Scan object is created based on the associated schedule item. Note that for recurring scans, all individual occurrences of the scan share a common schedule item.
+"""
+type ScheduleItem {
+  "The unique identifier of the schedule item."
+  id: ID!
+  "The first site on which scans created from this schedule item are performed."
+  site: Site @deprecated(reason: "Use the 'sites' field instead, which supports multiple sites.")
+  "The sites on which scans created from this schedule item are performed."
+  sites: [Site!]!
+  "The folders on which scans created from this schedule item are performed."
+  folders: [Folder!]!
+  "Information about the time at which scans created from this schedule item run, and their frequency."
+  schedule: Schedule!
+  "A list of the scan configurations used by scans created from this schedule item."
+  scan_configurations: [ScanConfiguration!]!
+  "Indicates whether a recurring scan created from this schedule item has run more than once."
+  has_run_more_than_once: Boolean
+  "The next time that a scan created from this schedule item is due to run."
+  scheduled_run_time: Timestamp
+  "If true, the next run of the schedule item will capture verbose debugging information."
+  verbose_debug: Boolean
+}
+
+"""
+Contains a list of Schedule items when returned as a page, as well as the total number of pages.
+"""
+type ScheduleItemsContainer {
+  "A list of returned Schedule items."
+  items: [ScheduleItem!]
+  "Total number of Schedule items."
+  total_count: Int!
+}
+
+type ScimSettings {
+  enabled: Boolean!
+  port: Int!
+  use_tls: Boolean!
+  certificate_name: String
+  token: String
+}
+
+"""
+The URLs that Burp Scanner is allowed to crawl and audit during scans of a given site. The scope includes all the subdirectories of the in-scope URL prefixes. It excludes all the subdirectories of the out-of-scope URL prefixes.
+"""
+type ScopeV2 {
+  "The URLs that Burp Scanner begins the scan from."
+  start_urls: [String!]!
+  "A list of URLs that Burp Scanner is allowed to scan. If the list is empty, the site scope is automatically derived from the start URLs."
+  in_scope_url_prefixes: [String!]!
+  "A list of URLs that will be skipped during scans of this site. For example, if a particular subdirectory contains sensitive data, you can enter its URL here to exclude it from scans. All subdirectories of an excluded URL will also be skipped."
+  out_of_scope_url_prefixes: [String!]!
+  "Options to determine which protocols are used when scanning your site's URLs."
+  protocol_options: ScopeProtocolOptions
+}
+
+type Settings {
+  global_scans_enabled: Boolean
+  global_scan_throttle_enabled: Boolean
+  global_max_concurrent_scans: Int
+  project_file_storage_path: String!
+}
+
+"A change to the severity of an issue."
+type SeverityIssueChange {
+  "The severity an issue was changed to."
+  severity: Severity
+}
+
+"""
+A representation of a website or web application that you want to scan and track using Burp Suite DAST.
+"""
+type Site {
+  "The unique identifier of the site."
+  id: ID!
+  "The name of the site. This is the name that appears on the Burp Suite DAST web UI. Note that the name of a site must be unique within its parent folder."
+  name: String
+  "The unique identifier of the folder that is the parent of this site in the site tree hierarchy.  A parent ID of 0 indicates that this site is on the root level."
+  parent_id: ID!
+  "The site scope."
+  scope_v2: ScopeV2
+  "The API definition."
+  api_definitions: [ApiDefinition!]
+  "A list of the scan configurations that you want to use for scans of this site."
+  scan_configurations: [ScanConfiguration!]
+  "The extensions assigned to this site."
+  extensions: [Extension!]
+  "The bchecks assigned to this site."
+  bchecks: [BCheck!]
+  "All the saved application logins for this site. These can either be basic sets of login credentials or scripts of full login sequences that you recorded with the Burp Suite Navigation Recorder browser extension. These are used by scans to crawl areas of the site that are only accessible to registered users. Note that you can only use one type of application login for each site."
+  application_logins: ApplicationLogins!
+  "In the 'Sites and scan data' settings, your Burp Suite DAST administrator can configure the web UI to only display user-created sites in the site tree. In this case, all sites generated using the REST API will be set as 'ephemeral'. This means they will never be displayed in the site tree, even if the administrator changes this setting later."
+  ephemeral: Boolean
+  "A list of all the email addresses to which scan reports are sent whenever scans of this site finish."
+  email_recipients: [EmailRecipient!]
+  "The agent pool used for scanning this site."
+  agent_pool: AgentPool
+  "The information about Slack notifications for this site."
+  slack_channels: [SlackChannel]
+  "Settings that specify headers and cookies to use with the site."
+  settings: SiteSettings
+  "The tags associated with this site."
+  tags: [Tag!]
+  "Whether any authentication scheme for any API definition on this site has missing credentials"
+  has_missing_api_credentials: Boolean!
+}
+
+"Settings for a site."
+type SiteSettings {
+  "The list of request headers for a site."
+  request_headers: [RequestHeader!]
+  "The list of request cookies for a site."
+  request_cookies: [RequestHeader!]
+  "The list of platform authentications for a site."
+  platform_authentication: [PlatformAuthentication!]
+  "The list of proxies for a site."
+  proxies: [Proxy!]
+}
+
+"""
+The site tree is the hierarchical structure containing all sites and folders that you have configured in Burp Suite DAST. You can use folders to organize the site tree however you want. For example, you might choose to group sites based on their geographical location or based on the different teams of developers that work on them.
+"""
+type SiteTree {
+  "A list of all folders in the site tree."
+  folders: [Folder!]!
+  "A list of all sites in the site tree. This includes all user-created sites and any sites that were generated using the GraphQL API. Sites generated using the REST API will only be included if the administrator configured this in the 'Site and scan data' settings on the web UI."
+  sites: [Site!]!
+  "A list of all sites created by CI-driven scans in the site tree."
+  cids_sites: [CidsSite!]!
+}
+
+"A channel obtained from the Slack API."
+type SlackApiChannel {
+  "The id of the Slack channel."
+  id: ID!
+  "The name of the Slack channel."
+  name: String!
+}
+
+"Channels obtained from the Slack API."
+type SlackAppConfiguration {
+  "Indicates whether errors are present or not."
+  ok: Boolean!
+  "Any error message."
+  error: String
+  app_name: String
+  "The Slack channels that are available."
+  channels: [SlackApiChannel!]!
+}
+
+"A Slack channel."
+type SlackChannel {
+  "The id of the Slack channel."
+  id: ID!
+  "The name of the Slack channel."
+  name: String!
+}
+
+"Slack channels configured for use within Burp Suite DAST."
+type SlackChannels {
+  "The Slack channels that are available."
+  channels: [SlackChannel!]!
+}
+
+"""
+An extract of the relevant part of an HTTP request or response. This is used in the case of long HTTP messages that contain too much irrelevant data for all of it to be displayed.
+"""
+type SnipSegment {
+  "The length of the extracted segment in bytes."
+  snip_length: Int
+}
+
+"A SOAP endpoint."
+type SoapEndpoint {
+  "The ID used to reference this endpoint"
+  id: ID!
+  "The API endpoint hostname."
+  host: String!
+  "The API endpoint path and query."
+  path: String!
+  "The API endpoint operation name."
+  name: String!
+  "The API endpoint content type (for example: 'application/json')."
+  content_type: String
+}
+
+"""
+The Splunk settings.
+
+Represents the current configuration for streaming issues from Burp Suite DAST
+to Splunk for advanced analysis and real-time monitoring.
+"""
+type SplunkSettings {
+  "The URL of the Splunk instance.
+    
+The base URL of your Splunk deployment where issues will be streamed.
+Should include the protocol and port number."
+  url: String!
+}
+
+type SystemWarning {
+  type: SystemWarningType
+  message: String
+}
+
+"Tags can be used to categorize sites and folders."
+type Tag {
+  "The unique identifier of the tag."
+  id: ID!
+  "The name of the tag."
+  name: String!
+  "The description of the tag."
+  description: String
+  "The color of the tag."
+  color: TagColor!
+}
+
+"A ticket that is created based on an issue found by a scan."
+type Ticket {
+  "The Jira ticket that is linked to the issue."
+  jira_ticket: JiraTicket
+  "The GitLab issue that is linked to the issue."
+  gitlab_issue: GitLabIssue
+  "The Trello card that is linked to the issue."
+  trello_card: TrelloCard
+  "A link to the ticket in the external ticketing system, for example, Jira."
+  link_url: String
+  "The unique identifier of the link between the Burp Scanner issue and the external ticket."
+  link_id: ID
+  "The date that the ticket was linked to the issue."
+  date_added: Timestamp
+}
+
+"A Trello board."
+type TrelloBoard {
+  "Unique identifier for the board."
+  id: String!
+  "Name of the board."
+  name: String!
+  "List of columns on the board."
+  lists: [TrelloList!]
+}
+
+type TrelloBoardLink {
+  board_id: String!
+  board_name: String!
+  list_id: String!
+  list_name: String!
+}
+
+"A Trello card that is linked to an issue found by a scan."
+type TrelloCard {
+  "An identifier for the Trello card."
+  id: ID!
+  "The details of the Trello card."
+  card_details: TrelloCardDetails
+}
+
+"The details of the linked Trello card."
+type TrelloCardDetails {
+  "Title of the Trello card."
+  title: String
+  "Name of the Trello board the card is in."
+  board_name: String
+  "Name of the Trello list the card is in."
+  list_name: String
+}
+
+"Trello card details."
+type TrelloCardPayload {
+  id: String!
+  title: String!
+  short_url: String!
+}
+
+"Trello link details."
+type TrelloLinkPayload {
+  id: ID!
+  title: String!
+  url: String!
+}
+
+"A column on a Trello board."
+type TrelloList {
+  "Unique identifier for the board."
+  id: String!
+  "Name of the list."
+  name: String!
+}
+
+type TrelloSettings {
+  api_key: String!
+  board_links: [TrelloBoardLink!]
+  auto_trello_settings: AutomaticTrelloSettings
+  auto_create_enabled: Boolean!
+}
+
+"""
+An agent machine that you have configured but whose connection to the DAST server you have not yet authorized. All new agent machines must be authorized before they can communicate with the DAST server and run scans.
+"""
+type UnauthorizedAgent implements AgentMachine {
+  "The unique identifier of the machine that you have configured for use as an agent machine."
+  machine_id: ID!
+  "The IP address of the machine that is configured for use as an agent machine."
+  ip: String!
+}
+
+"""
+The fields and values that are returned after updating the maximum number of concurrent scans for an agent machine.
+"""
+type UpdateAgentMaxConcurrentScansPayload {
+  "The updated agent machine."
+  agent: Agent
+}
+
+"The fields and values that are returned after updating a BCheck."
+type UpdateBCheckByNamePayload {
+  "The updated BCheck."
+  bcheck: BCheck!
+}
+
+"The fields and values that are returned after updating a BCheck."
+type UpdateBCheckPayload {
+  "The updated BCheck."
+  bcheck: BCheck!
+}
+
+"""
+The fields and values that are returned after updating the description of a custom extension.
+"""
+type UpdateCustomExtensionDescriptionPayload {
+  "The uploaded extension."
+  extension: Extension!
+}
+
+"""
+The fields and values returned when you update the .jar file of a custom extension.
+"""
+type UpdateCustomExtensionJarPayload {
+  "The uploaded extension."
+  extension: Extension!
+}
+
+"The fields and values that are returned after uploading a custom extension."
+type UpdateCustomExtensionNamePayload {
+  "The uploaded extension."
+  extension: Extension!
+}
+
+"""
+The fields and values that are returned after updating whether an issue is treated as a false positive or not.
+"""
+type UpdateFalsePositivePayload {
+  "Indicates whether the false positive was successfully updated."
+  successful: Boolean
+}
+
+"""
+The fields and values that are returned after updating the BChecks for a folder in the site tree.
+"""
+type UpdateFolderBChecksPayload {
+  "The updated folder."
+  folder: Folder!
+}
+
+"""
+The fields and values that are returned after updating the description for a folder in the site tree.
+"""
+type UpdateFolderDescriptionPayload {
+  "The updated folder."
+  folder: Folder!
+}
+
+"""
+The fields and values that are returned after updating a recipient of scan completion reports for this folder.
+"""
+type UpdateFolderEmailRecipientPayload {
+  "The updated email recipient."
+  email_recipient: EmailRecipient
+}
+
+"""
+The fields and values that are returned after updating the extensions for a folder in the site tree.
+"""
+type UpdateFolderExtensionsPayload {
+  "The updated folder."
+  folder: Folder!
+}
+
+"The fields and values that are returned after updating a request cookie."
+type UpdateFolderRequestCookiePayload {
+  request_cookie: RequestCookie!
+}
+
+"The fields and values that are returned after updating a request header."
+type UpdateFolderRequestHeaderPayload {
+  request_header: RequestHeader!
+}
+
+"""
+The fields and values that are returned after updating the scan configurations for a folder in the site tree.
+"""
+type UpdateFolderScanConfigurationsPayload {
+  "The updated folder."
+  folder: Folder!
+}
+
+"""
+The fields and values that are returned after updating the Slack notifications for a folder in the site tree.
+"""
+type UpdateFolderSlackChannelsPayload {
+  "The updated folder."
+  folder: Folder!
+}
+
+type UpdateForwardPropagationSettingsPayload {
+  false_positive: ForwardPropagationMode
+  severity: ForwardPropagationMode
+  accepted_risk: ForwardPropagationMode
+}
+
+"GitLab connection URL that has been updated."
+type UpdateGitLabSettingsPayload {
+  settings: GitLabSettings
+}
+
+"The fields and values that are returned after changing the severity of an issue."
+type UpdateIssuePayload {
+  "The updated issue"
+  issue: Issue
+}
+
+type UpdateJiraCredentialsPayload {
+  jira_credentials: JiraCredentials
+}
+
+"The MFA settings."
+type UpdateMfaSettings {
+  enabled: Boolean!
+  totp_backup_codes: [BackupCode!]
+}
+
+"The response payload after updating the project file storage path."
+type UpdateProjectFileStoragePathPayload {
+  "The updated project file storage path."
+  project_file_storage_path: String!
+}
+
+"The fields and values that are returned after updating the site settings."
+type UpdateRequestHeadersPayload {
+  "The updated site."
+  site: Site!
+}
+
+"The fields and values that are returned after updating a scan configuration."
+type UpdateScanConfigurationPayload {
+  "The updated scan configuration."
+  scan_configuration: ScanConfiguration!
+}
+
+"The fields and values that are returned after updating a schedule item."
+type UpdateScheduleItemPayload {
+  "The updated schedule item."
+  schedule_item: ScheduleItem!
+}
+
+type UpdateScimSettingsPayload {
+  scim_settings: ScimSettings!
+}
+
+"""
+The fields and values that are returned after updating the enabled endpoints for API definition.
+"""
+type UpdateSiteApiDefinitionAuthenticationsPayload {
+  "The updated site."
+  site: Site
+}
+
+"""
+The fields and values that are returned after updating the enabled endpoints for API definition.
+"""
+type UpdateSiteApiDefinitionEnabledEndpointsPayload {
+  "The updated site."
+  site: Site
+}
+
+"""
+The fields and values that are returned after updating the API definition for scans of a site.
+"""
+type UpdateSiteApiDefinitionPayload {
+  "The updated site."
+  site: Site
+}
+
+"""
+The fields and values that are returned after updating the BChecks for a site in the site tree.
+"""
+type UpdateSiteBChecksPayload {
+  "The updated site."
+  site: Site!
+}
+
+"""
+The fields and values that are returned after updating a recipient of scan completion reports.
+"""
+type UpdateSiteEmailRecipientPayload {
+  "The updated email recipient."
+  email_recipient: EmailRecipient
+}
+
+"""
+The fields and values that are returned after updating the extensions for a site in the site tree.
+"""
+type UpdateSiteExtensionsPayload {
+  "The updated site."
+  site: Site!
+}
+
+"""
+The fields and values that are returned after updating a set of login credentials for a site.
+"""
+type UpdateSiteLoginCredentialPayload {
+  "The updated login credentials."
+  login_credential: LoginCredential
+}
+
+"""
+The fields and values that are returned after updating a recorded login sequence for a site.
+"""
+type UpdateSiteRecordedLoginPayload {
+  "The updated recorded login sequence."
+  recorded_login: RecordedLogin
+}
+
+"The fields and values that are returned after updating a request cookie."
+type UpdateSiteRequestCookiePayload {
+  "The updated request cookie."
+  request_cookie: RequestCookie!
+}
+
+"The fields and values that are returned after updating a request header."
+type UpdateSiteRequestHeaderPayload {
+  "The updated request header."
+  request_header: RequestHeader!
+}
+
+"""
+The fields and values that are returned after updating the scan configurations for a site in the site tree.
+"""
+type UpdateSiteScanConfigurationsPayload {
+  "The updated site."
+  site: Site!
+}
+
+"""
+The fields and values that are returned after updating the scope for scans of a site.
+"""
+type UpdateSiteScopeV2Payload {
+  "The updated site."
+  site: Site
+}
+
+"The site with its updates applied."
+type UpdateSiteSlackChannelsPayload {
+  "The updated site."
+  site: Site!
+}
+
+"Slack settings that have been updated."
+type UpdateSlackSettingsPayload {
+  connected: Boolean!
+  channels: [SlackChannel!]!
+}
+
+"""
+The response payload after updating Splunk settings.
+
+Returned after successfully configuring or updating the Splunk integration.
+"""
+type UpdateSplunkEnterpriseSecuritySettingsPayload {
+  "A randomly generated token for this configuration.
+    
+Generated server-side when settings are successfully updated. Can be used
+to verify the integration in Splunk's Search & Reporting."
+  random_token: String!
+}
+
+"The fields and values that are returned after updating a tag."
+type UpdateTagPayload {
+  "The updated tag."
+  tag: Tag!
+}
+
+"Payload to configure the trello connection."
+type UpdateTrelloSettingsPayload {
+  board_links: [TrelloBoardLink!]
+}
+
+type UpdateUserActivityLogSettingsPayload {
+  enabled: Boolean
+  retention_period: Int
+}
+
+"The fields and values that are returned after uploading a BCheck."
+type UploadBCheckPayload {
+  "The uploaded BCheck."
+  bcheck: BCheck!
+}
+
+"The fields and values that are returned after uploading a BApp."
+type UploadBappPayload {
+  "The uploaded extension."
+  extension: Extension!
+}
+
+type UploadCsvSitesError {
+  row: Int
+  message: String
+}
+
+type UploadCsvSitesPayload {
+  successes: [UploadCsvSitesSuccess!]
+  errors: [UploadCsvSitesError!]
+}
+
+type UploadCsvSitesSuccess {
+  row: Int
+  site_id: ID
+}
+
+"The fields and values that are returned after uploading a custom extension."
+type UploadCustomExtensionPayload {
+  "The uploaded extension."
+  extension: Extension!
+}
+
+"""
+The URL hosting the API definition that Burp Scanner is allowed to audit during scans.
+"""
+type UrlBasedApiDefinition {
+  "The URL where the API definition file is hosted."
+  url: String!
+  "A list of the API authentication credentials (for example: Basic, Bearer Token, API Key)."
+  authentications: [ApiAuthentication!]!
+}
+
+"A registered user of Burp Suite DAST."
+type User {
+  "The username of the user. For human users, this is the username with which they log in to the Burp Suite DAST web UI. For API users, this is just a name to help identify the user."
+  username: String!
+}
+
+type UserAccount {
+  totp_backup_codes: [BackupCode!]!
+}
+
+type UserActivityLogSettings {
+  enabled: Boolean
+  retention_period: Int
+}
+
+type VulnerabilitySummary {
+  issue_name: String!
+  severity: Severity!
+  high_count: Int!
+  medium_count: Int!
+  low_count: Int!
+  info_count: Int!
+}
+
+# ==============================================================================
+# ROOT TYPES
+# ==============================================================================
+
+"""
+The root Query object type serves as the top-level API from which all read operations start. It provides the following fields, which you can use as the entry point for querying the API.
+"""
+type Query {
+  "Returns a list of scan configurations that are available for the integrated Burp Scanner. This includes both the standard scan configurations delivered with Burp Suite DAST and any custom scan configurations that you have imported."
+  scan_configurations: [ScanConfiguration!]
+  "Returns a virtual or physical machine that you have configured for use as an agent machine in Burp Suite DAST. Agent machines are the machines on which your scans run."
+  agent(id: ID!): Agent
+  "Returns a list of virtual or physical machines that you have configured for use as agent machines in Burp Suite DAST. Agent machines are the machines on which your scans run."
+  agents: [Agent!]
+  "Returns a list of agent machines that you have configured, but whose connection to the DAST server you have not yet authorized."
+  unauthorized_agents: [UnauthorizedAgent!]
+  "Returns a list of agent pools, which can be used to control which agents are used to scan particular sites."
+  agent_pools: [AgentPool]
+  "Returns an issue found by a scan."
+  issue(scan_id: ID!, serial_number: ID!): Issue
+  "Returns an individual scan from Burp Suite DAST."
+  scan(id: ID!): Scan
+  "Returns a list of scans from Burp Suite DAST."
+  scans(
+    offset: Int
+    limit: Int
+    sort_column: ScansSortColumn
+    sort_order: SortOrder
+    scan_status: [ScanStatus]
+    scan_target_id: ID
+    schedule_item_id: ID
+    scan_end_time_from: Timestamp
+    scan_end_time_to: Timestamp
+  ): [Scan!]
+  "Returns a report containing details of a scan, such as which issues were found, and which URLs were scanned. This can either be a summary or detailed report."
+  scan_report(
+    scan_id: ID!
+    timezone_offset: Int
+    report_type: ScanReportType
+    include_false_positives: Boolean
+    severities: [Severity]
+  ): ScanReport
+  "Exports issue data in XML format."
+  burp_xml_report(
+    scan_id: ID!
+    timezone_offset: Int
+    include_false_positives: Boolean
+    severities: [Severity]
+    base64_encode_requests_and_responses: Boolean
+  ): BurpReport
+  "Returns a compliance report.
+We currently support "PCI DSS v4.0.1", "OWASP Top 10 2021" for report_type. Note that these are liable to change."
+  compliance_report(
+    scan_id: ID!
+    timezone_offset: Int
+    report_type: String!
+  ): ScanReport
+  "Returns an individual schedule item. A schedule item groups all of the scheduling data about a configured scan, such as the time and date when the scan is scheduled to run, and how frequently. When a scheduled scan is due to start, a Scan object is created based on the associated schedule item. Note that for recurring scans, all individual occurrences of the scan share a common schedule item."
+  schedule_item(id: ID!): ScheduleItem
+  "Returns a list of schedule items. A schedule item groups all of the scheduling data about a configured scan, such as the time and date when the scan is scheduled to run, and how frequently. When a scheduled scan is due to start, a Scan object is created based on the associated schedule item. Note that for recurring scans, all individual occurrences of the scan share a common schedule item."
+  schedule_items(sort_by: SortBy, sort_order: SortOrder): [ScheduleItem!]
+  paged_schedule_items(
+    offset: Int
+    limit: Int
+    site_or_folder_id: ID
+    sort_by: SortBy
+    sort_order: SortOrder
+  ): ScheduleItemsContainer
+  "Returns a list of entries in the Burp Suite DAST site tree. This includes individual websites that you have added, as well as any folders."
+  site_tree: SiteTree
+  "Returns an individual site from Burp Suite DAST."
+  site(id: ID!): Site
+  "Returns an individual CIDS site from Burp Suite DAST."
+  cids_site(id: ID!): CidsSite
+  "Returns an individual folder from Burp Suite DAST."
+  folder(id: ID!): Folder
+  "Returns the list of all extensions in your libraries, whether custom extension or BApp."
+  extensions: [Extension!]
+  support_pack: String
+  agent_log(agent_id: ID!): String
+  scan_log(scan_id: ID!): String
+  project_file(scan_id: ID!): String
+  user_activity_log: String
+  settings: Settings
+  scim_settings: ScimSettings
+  scim_url: String
+  ephemeral_agents: [EphemeralAgent!]
+  scan_severity_trend_counts(scan_id: ID!): [ScanSeverityCounts!]
+  scan_top_vulnerabilities(scan_id: ID!): [VulnerabilitySummary]
+  capabilities: Capabilities!
+  "Returns information about channels obtained from the Slack API."
+  slack_app_configuration(authToken: String): SlackAppConfiguration
+  "Returns information about Slack Channels configured for use by Burp Suite DAST."
+  slack_channels: SlackChannels
+  "Returns information about Splunk settings.
+    
+Retrieves the current Splunk integration configuration used to stream issues
+directly to Splunk for advanced analysis, enabling real-time monitoring and
+event management."
+  splunk_settings: SplunkSettings
+  "Returns information about GitLab settings."
+  gitlab_settings: GitLabSettings
+  "Returns a list of visible projects from the GitLab API."
+  gitlab_projects(url: String, access_token: String): GitLabProjects
+  "Retrieves the available Trello boards, and the lists on those boards."
+  trello_boards(api_key: String, api_token: String): [TrelloBoard!]
+  "Returns the current trello settings."
+  trello_settings: TrelloSettings
+  jira_credentials: JiraCredentials
+  jira_projects: JiraProjects
+  jira_project_info(project_id: ID!): JiraProjectInfo
+  jira_ticket_search(input: JiraTicketSearchInput!): JiraTicketSearchResults
+  jira_manual_rules: [JiraManualRule]
+  jira_automatic_rules: [JiraAutomaticRule]
+  featured_scan_configurations: [FeaturedScanConfiguration!]
+  scan_event_log(scan_id: ID!, type: [ScanEventLogType!]): ScanEventLog
+  "Retrieves the pre-scan check results for a site."
+  pre_scan_check(site_id: ID!): PreScanCheck
+  system_warnings: [SystemWarning]
+  "Retrieve a list of scan settings for a site or folder. The list includes scan settings inherited from parent folders."
+  hierarchical_scan_settings(site_or_folder_id: ID!): HierarchicalScanSettings
+  live_cid_scans: [LiveCIDScan!]
+  scan_target(id: ID!): ScanTarget
+  user_activity_log_settings: UserActivityLogSettings
+  questionnaire: Questionnaire
+  "List the BChecks in the BCheck library"
+  bchecks(
+    offset: Int
+    limit: Int
+    sort_column: BCheckSortColumn
+    sort_order: SortOrder
+  ): BChecksContainer
+  "Returns a list of Self Hosted Scanning Machine authentication tokens that you have configured for use as tokens for Self Hosted Scanning Machines."
+  self_hosted_scanning_machine_tokens: [MachineToken]
+  "Returns the download URL for the Self Hosted Scanning Machine Installer"
+  installer_links: InstallerLinks
+  me: UserAccount
+  "Returns the parsed API definitions including supported authentication schemes and API endpoints from an API definition file.
+These definitions can be used when creating a new site or updating an existing one.
+Note that no credentials are included for any authentication schemes, as the API definition file should not contain credentials.
+Any required credentials can be provided by the user based on the specific authentication scheme in use."
+  parse_api_definition(api_definition_contents: String): ParsedApiDefinition
+  "Returns the current forward propagation setting for false positives, change severity, and accepted risk."
+  forward_propagation_settings: ForwardPropagationSettings
+  "Returns all tags."
+  tags: [Tag!]
+  "Check if Jira is connected."
+  jira_connection_check: Boolean
+  "Returns the Jira ticket fields for a given ticket type and project."
+  jira_ticket_fields(input: JiraTicketTypeFieldsInput!): JiraTicketFieldListResult
+}
+
+type Mutation {
+  "Updates an existing scan configuration and returns the new configuration."
+  update_scan_configuration(
+    "The fields used to specify which scan configuration you want to update, and what changes you want to make."
+    input: UpdateScanConfigurationInput!
+  ): UpdateScanConfigurationPayload
+  "Creates a new scan configuration."
+  create_scan_configuration(
+    "The fields used to create a new scan configuration."
+    input: CreateScanConfigurationInput!
+  ): CreateScanConfigurationPayload
+  "Permanently removes an existing scan configuration from Burp Suite DAST."
+  delete_scan_configuration(
+    "The fields used to specify which scan configuration you want to delete."
+    input: DeleteScanConfigurationInput!
+  ): DeleteScanConfigurationPayload
+  "Creates a new schedule item, which exposes all of the scheduling data about a configured scan. When a scheduled scan is due to start, a Scan object is created based on the associated schedule item."
+  create_schedule_item(
+    "The fields used to create a new schedule item."
+    input: CreateScheduleItemInput!
+  ): CreateScheduleItemPayload
+  "Updates an existing schedule item. For example, you can change the date and time when a scan is due to start or how often a recurring scan should run."
+  update_schedule_item(
+    "The fields used to specify which schedule item you want to update, and what changes you want to make."
+    input: UpdateScheduleItemInput!
+  ): UpdateScheduleItemPayload
+  "Permanently removes a scan from Burp Suite DAST. Note that you cannot delete a scan that is currently running. To delete a running scan, you need to cancel it first. Deleting a scan also removes all of the data that it generated, such as any issues that it found."
+  delete_scan(
+    "The fields used to specify which scan you want to delete."
+    input: DeleteScanInput!
+  ): DeleteScanPayload
+  "Permanently removes a schedule item from Burp Suite DAST."
+  delete_schedule_item(
+    "The fields used to specify which schedule item you want to delete."
+    input: DeleteScheduleItemInput!
+  ): DeleteScheduleItemPayload
+  "Cancels a scan that is currently scheduled or running in Burp Suite DAST."
+  cancel_scan(
+    "The fields used to specify which scan you want to cancel."
+    input: CancelScanInput!
+  ): CancelScanPayload
+  "Pauses a scan that is currently running or queued in Burp Suite DAST."
+  pause_scan(
+    "The fields used to specify which scan you want to pause."
+    input: PauseScanInput!
+  ): PauseScanPayload
+  "Resumes a scan that is currently paused in Burp Suite DAST."
+  resume_scan(
+    "The fields used to specify which scan you want to resume."
+    input: ResumeScanInput!
+  ): ResumeScanPayload
+  "Updates whether a given issue is marked as a false positive or not."
+  update_false_positive(
+    "The fields used to specify which issues you want to mark or unmark as a false positive."
+    input: UpdateFalsePositiveInput!
+  ): UpdateFalsePositivePayload
+  "Mark an issue as a false positive."
+  mark_false_positive(
+    "Specifies the fields required to update when an issue is marked as a false_positive."
+    input: MarkFalsePositiveInput!
+  ): MarkFalsePositivePayload
+  "Allows some issue fields to be modified. Currently severity and accepted risk are supported."
+  update_issue(
+    "Specifies the fields required to update an issue."
+    input: UpdateIssueInput
+  ): UpdateIssuePayload
+  "Updates the maximum number of concurrent scans that are allowed to run on a given agent machine."
+  update_agent_max_concurrent_scans(
+    "The fields used to specify which agent machine you want to update, and the new number of concurrent scans that are allowed to run on it."
+    input: UpdateAgentMaxConcurrentScansInput!
+  ): UpdateAgentMaxConcurrentScansPayload
+  "Updates the name for an existing agent machine."
+  rename_agent(
+    "The fields used to specify which agent machine you want to rename and the new name that you want to assign."
+    input: RenameAgentInput!
+  ): RenameAgentPayload
+  "Enables or disables an existing agent machine. An agent machine but be enabled in order to run scans. While disabled, it will be skipped when new scans are distributed among your pool of agent machines."
+  enable_agent(
+    "The fields used to enable or disable an agent machine."
+    input: EnableAgentInput!
+  ): EnableAgentPayload
+  "Confirms the authorization of a new agent machine for which an authorization request is currently pending. All new agent machines must be authorized before they can communicate with the DAST server and run scans."
+  authorize_agent(
+    "The fields used to specify which new agent machine you want to authorize."
+    input: AuthorizeAgentInput!
+  ): AuthorizeAgentPayload
+  "Revokes the authorization of an existing agent machine so that it can no longer communicate with the DAST server or run scans."
+  deauthorize_agent(
+    "The fields used to specify the agent machine whose authorization you want to revoke."
+    input: DeauthorizeAgentInput!
+  ): DeauthorizeAgentPayload
+  "Permanently removes a site from the site tree in Burp Suite DAST. Note that when you delete a site, all of the associated data is also deleted. This includes any scans that were performed on the site and their results."
+  delete_site(
+    "The fields used to specify the site that you want to delete."
+    input: DeleteSiteInput!
+  ): DeleteSitePayload
+  "Permanently removes a site for a CI-driven scan from the site tree in Burp Suite DAST. Note that when you delete sites for CI-driven scans, all of the associated data is also deleted."
+  delete_cids_site(
+    "The fields used to specify the site for a CI-driven scan that you want to delete."
+    input: DeleteCidsSiteInput!
+  ): DeleteCidsSitePayload
+  "Permanently removes a folder from the site tree in Burp Suite DAST. Note that deleting a folder also deletes any subfolders and sites that it contains, along with their associated data."
+  delete_folder(input: DeleteFolderInput!): DeleteFolderPayload
+  "Creates a new folder in the site tree of Burp Suite DAST."
+  create_folder(
+    "The fields used to create a new folder in the site tree."
+    input: CreateFolderInput!
+  ): CreateFolderPayload
+  "Creates a new site in the site tree of Burp Suite DAST."
+  create_site(
+    "The fields used to create a new site in the site tree."
+    input: CreateSiteInput!
+  ): CreateSitePayload
+  "Renames an existing site in the site tree."
+  rename_site(
+    "The fields used to specify which site you want to rename and what the new name should be."
+    input: RenameSiteInput!
+  ): RenameSitePayload
+  "Renames an existing CIDS site in the site tree."
+  rename_cids_site(
+    "The fields used to specify which site for a CI-driven scan you want to rename and what the new name should be."
+    input: RenameCidsSiteInput!
+  ): RenameCidsSitePayload
+  "Renames an existing folder in the site tree."
+  rename_folder(
+    "The fields used to specify which folder you want to rename and what the new name should be."
+    input: RenameFolderInput!
+  ): RenameFolderPayload
+  "Updates the scan configurations for a given site."
+  update_site_scan_configurations(
+    "The fields used to specify which site you want update and what its new scan configurations should be."
+    input: UpdateSiteScanConfigurationsInput!
+  ): UpdateSiteScanConfigurationsPayload
+  "Updates the extensions assigned to a site."
+  update_site_extensions(
+    "The fields used to specify which site you want update and what its new extensions should be."
+    input: UpdateSiteExtensionsInput!
+  ): UpdateSiteExtensionsPayload
+  "Updates the BChecks assigned to a site."
+  update_site_bchecks(
+    "The fields used to specify which site you want update and what its new BChecks should be."
+    input: UpdateSiteBChecksInput!
+  ): UpdateSiteBChecksPayload
+  "Updates the site scope."
+  update_site_scope_v2(
+    "The fields used to specify which site you want to update, and the site scope."
+    input: UpdateSiteScopeV2Input!
+  ): UpdateSiteScopeV2Payload
+  "Updates the API definition."
+  update_site_api_definition(
+    "The fields used to specify which site you want to update, and the API definition."
+    input: UpdateSiteApiDefinitionInput!
+  ): UpdateSiteApiDefinitionPayload
+  "Updates the enabled endpoints for an API Definition."
+  update_site_api_definition_enabled_endpoints(
+    "The fields used to specify which site you want to update, and the API definition."
+    input: UpdateSiteApiDefinitionEnabledEndpointsInput!
+  ): UpdateSiteApiDefinitionEnabledEndpointsPayload
+  "Updates the Authentication for an API Definition."
+  update_site_api_definition_authentications(input: UpdateSiteApiDefinitionAuthenticationsInput!): UpdateSiteApiDefinitionAuthenticationsPayload
+  "Adds a new set of login credentials for a given site. This set of credentials is used by scans to crawl areas of the site that are only accessible to registered users. Note that this does not create a new user account on the actual website. The credentials that you specify here must already be valid for the website that you want to scan."
+  create_site_login_credential(
+    "The fields used to add a new set of login credentials for a given site."
+    input: CreateSiteLoginCredentialInput!
+  ): CreateSiteLoginCredentialPayload
+  "Updates an existing set of login credentials for a site. For example, if the user's password has changed, you can update the corresponding entry in Burp Suite DAST to reflect this change."
+  update_site_login_credential(
+    "The fields used to specify which set of login credentials you want to update, and what the new username and password should be."
+    input: UpdateSiteLoginCredentialInput!
+  ): UpdateSiteLoginCredentialPayload
+  "Permanently removes a saved set of login credentials for a site."
+  delete_site_login_credential(
+    "The fields used to specify which set of login credentials you want to delete."
+    input: DeleteSiteLoginCredentialInput!
+  ): DeleteSiteLoginCredentialPayload
+  "Adds a new recorded login sequence for a given site. Note that you need to record the login sequence first using the Burp Suite Navigation Recorder browser extension in order to generate a JSON-based script. The script is used by scans to replicate the manual actions you performed in the browser. This enables Burp Scanner to handle more complex login mechanisms, such as single sign-on, in order to crawl areas of the site that are only accessible to registered users."
+  create_site_recorded_login(
+    "The fields used to add a new recorded login sequence for a given site."
+    input: CreateSiteRecordedLoginInput!
+  ): CreateSiteRecordedLoginPayload
+  "Permanently removes a recorded login sequence for a site."
+  delete_site_recorded_login(
+    "The fields used to specify which recorded login sequence you want to delete."
+    input: DeleteSiteRecordedLoginInput!
+  ): DeleteSiteRecordedLoginPayload
+  "Updates an existing recorded login sequence for a site."
+  update_site_recorded_login(
+    "The fields used to update an existing recorded login sequence."
+    input: UpdateSiteRecordedLoginInput!
+  ): UpdateSiteRecordedLoginPayload
+  "Adds a new recipient to the list of people who receive scan completion reports for a given site."
+  create_site_email_recipient(
+    "The fields used to create a new recipient of scan completion reports."
+    input: CreateSiteEmailRecipientInput!
+  ): CreateSiteEmailRecipientPayload
+  "Updates the email address of an existing recipient of scan completion reports."
+  update_site_email_recipient(
+    "The fields used to specify the email recipient that you want to update, and what their new email address should be."
+    input: UpdateSiteEmailRecipientInput!
+  ): UpdateSiteEmailRecipientPayload
+  "Permanently removes an existing recipient of scan completion reports."
+  delete_site_email_recipient(
+    "The fields used to specify the email recipient that you want to delete."
+    input: DeleteSiteEmailRecipientInput!
+  ): DeleteSiteEmailRecipientPayload
+  "Updates information about Slack notifications for a specific site."
+  update_site_slack_channels(input: UpdateSiteSlackChannelsInput!): UpdateSiteSlackChannelsPayload
+  "Delete a request header from a site."
+  delete_site_request_header(input: DeleteSiteRequestHeaderInput!): DeleteSiteRequestHeaderPayload
+  "Delete a request cookie from a site."
+  delete_site_request_cookie(input: DeleteSiteRequestCookieInput!): DeleteSiteRequestCookiePayload
+  "Add a new request header to a site."
+  create_site_request_header(input: CreateSiteRequestHeaderInput!): CreateSiteRequestHeaderPayload
+  "Add a new request cookie to a site."
+  create_site_request_cookie(input: CreateSiteRequestCookieInput!): CreateSiteRequestCookiePayload
+  "Updating an existing request header for a site."
+  update_site_request_header(input: UpdateSiteRequestHeaderInput!): UpdateSiteRequestHeaderPayload
+  "Updating an existing request cookie for a site."
+  update_site_request_cookie(input: UpdateSiteRequestCookieInput!): UpdateSiteRequestCookiePayload
+  "Add a new platform authentication to a site"
+  create_site_platform_authentication(input: CreateSitePlatformAuthenticationInput!): CreateSitePlatformAuthenticationPayload
+  "Add a new platform authentication to a folder"
+  create_folder_platform_authentication(input: CreateFolderPlatformAuthenticationInput!): CreateFolderPlatformAuthenticationPayload
+  "Delete a platform authentication from a site"
+  delete_site_platform_authentication(input: DeleteSitePlatformAuthenticationInput!): DeleteSitePlatformAuthenticationPayload
+  "Delete a platform authentication from a folder"
+  delete_folder_platform_authentication(input: DeleteFolderPlatformAuthenticationInput!): DeleteFolderPlatformAuthenticationPayload
+  "Add a new proxy configuration for a site"
+  create_site_proxy(input: CreateSiteProxyInput!): CreateSiteProxyPayload
+  "Delete a proxy configuration from a site"
+  delete_site_proxy(input: DeleteSiteProxyInput!): DeleteSiteProxyPayload
+  "Add a new proxy configuration for a Folder"
+  create_folder_proxy(input: CreateFolderProxyInput!): CreateFolderProxyPayload
+  "Delete a proxy configuration from a Folder"
+  delete_folder_proxy(input: DeleteFolderProxyInput!): DeleteFolderProxyPayload
+  "Moves a site to a different location in the site tree."
+  move_site(
+    "The fields used to specify which site you want to move, and the new parent folder."
+    input: MoveSiteInput!
+  ): MoveSitePayload
+  "Moves a site for a CI-driven scan to a different location in the site tree."
+  move_cids_site(
+    "The fields used to specify which site for a CI-driven scan you want to move, and the new parent folder."
+    input: MoveCidsSiteInput!
+  ): MoveCidsSitePayload
+  "Moves a folder, and its contents, to a different location in the site tree."
+  move_folder(
+    "The fields used to specify which folder you want to move, and the new parent folder."
+    input: MoveFolderInput!
+  ): MoveFolderPayload
+  update_folder_description(input: UpdateFolderDescriptionInput!): UpdateFolderDescriptionPayload
+  "Updates the scan configurations for a given folder."
+  update_folder_scan_configurations(
+    "The fields used to specify which scan configurations you want to update for the folder, and what changes to make."
+    input: UpdateFolderScanConfigurationsInput!
+  ): UpdateFolderScanConfigurationsPayload
+  "Updates the extensions assigned to a folder."
+  update_folder_extensions(
+    "The fields used to specify which folder you want update and what its new extensions should be."
+    input: UpdateFolderExtensionsInput!
+  ): UpdateFolderExtensionsPayload
+  "Updates the BChecks assigned to a folder."
+  update_folder_bchecks(
+    "The fields used to specify which folder you want update and what its new BChecks should be."
+    input: UpdateFolderBChecksInput!
+  ): UpdateFolderBChecksPayload
+  "Adds a new recipient to the list of people who receive scan completion reports for a given folder."
+  create_folder_email_recipient(
+    "The field used to create a new recipient of scan completion reports."
+    input: CreateFolderEmailRecipientInput!
+  ): CreateFolderEmailRecipientPayload
+  "Updates the email address of an existing recipient of scan completion reports for a folder."
+  update_folder_email_recipient(
+    "The fields used to specify the email recipient that you want to update, and what their new email address should be."
+    input: UpdateFolderEmailRecipientInput!
+  ): UpdateFolderEmailRecipientPayload
+  "permanently removes an existing recipient of scan completion reports for a folder."
+  delete_folder_email_recipient(
+    "The fields used to specify the email recipient that you want to delete."
+    input: DeleteFolderEmailRecipientInput!
+  ): DeleteFolderEmailRecipientPayload
+  "Creates a new agent pool."
+  create_agent_pool(
+    "The fields used to create a new agent pool."
+    input: CreateAgentPoolInput!
+  ): CreateAgentPoolPayload
+  "Updates the name and description for an existing agent pool."
+  update_agent_pool(
+    "The fields used to create a new agent pool."
+    input: UpdateAgentPoolInput!
+  ): CreateAgentPoolPayload
+  "Permanently deletes an agent pool. Any agents in the pool will be returned to the default pool, and any sites configured to scan using the agent pool will instead use the default pool."
+  delete_agent_pool(input: DeleteAgentPoolInput!): DeleteAgentPoolPayload
+  "Moves an agent from its current pool to a new pool."
+  move_agent_pool(
+    "The fields used to specify which agent you want to move, and which pool it should now be in."
+    input: MoveAgentPoolInput!
+  ): MoveAgentPoolPayload
+  "Assign sites to an agent pool, so only agents in that pool will scan those sites."
+  assign_sites_to_agent_pool(
+    "The fields used to specify which agent pool should be used for scanning the site."
+    input: AssignSitesToAgentPoolInput!
+  ): AssignSitesToAgentPoolPayload
+  "Get information about a BApp without adding it to the list of usable extensions."
+  get_bapp_details(
+    "The file from which to parse the extension's details."
+    input: UploadBappInput!
+  ): UploadBappPayload
+  "Uploads a new burp extension from a bapp file as a base64-encoded string. If there's already a different version of this extension, then it will be replaced."
+  upload_bapp(
+    "The file from which to create the new burp extension."
+    input: UploadBappInput!
+  ): UploadBappPayload
+  "Uploads a new custom extension from a .jar file as a base64-encoded string."
+  upload_custom_extension(
+    "The file from which the new burp extension is created."
+    input: UploadCustomExtensionInput!
+  ): UploadCustomExtensionPayload
+  "Remove a custom extension or a BApp from the library and any sites it is assigned to."
+  delete_extension(input: DeleteExtensionInput!): DeleteExtensionPayload
+  "Updates the name property of a custom extension."
+  update_custom_extension_name(
+    "The new name for the custom extension."
+    input: UpdateCustomExtensionNameInput!
+  ): UpdateCustomExtensionNamePayload
+  "Updates the description property of a custom extension."
+  update_custom_extension_description(
+    "The new description for the custom extension."
+    input: UpdateCustomExtensionDescriptionInput!
+  ): UpdateCustomExtensionDescriptionPayload
+  "Updates the .jar file for a custom extension."
+  update_custom_extension_jar(
+    "The new .jar file for the custom extension."
+    input: UpdateCustomExtensionJarInput!
+  ): UpdateCustomExtensionJarPayload
+  "Set the global scan limits, which can be used to."
+  global_concurrent_scan_settings(
+    "The fields used to enable or disable global scans."
+    input: GlobalConcurrentScanSettingsInput!
+  ): GlobalConcurrentScanSettingsPayload
+  upload_csv_sites(input: UploadCsvSitesInput!): UploadCsvSitesPayload
+  update_scim_settings(input: UpdateScimSettingsInput!): UpdateScimSettingsPayload
+  generate_scim_token: GenerateScimTokenPayload
+  "Updates information about Slack notifications for a specific folder."
+  update_folder_slack_channels(input: UpdateFolderSlackChannelsInput!): UpdateFolderSlackChannelsPayload
+  "Add a new request header to a folder"
+  create_folder_request_header(input: CreateFolderRequestHeaderInput!): CreateFolderRequestHeaderPayload
+  "Add a new request cookie to a folder"
+  create_folder_request_cookie(input: CreateFolderRequestCookieInput!): CreateFolderRequestCookiePayload
+  "Updating an existing request header for a folder"
+  update_folder_request_header(input: UpdateFolderRequestHeaderInput!): UpdateFolderRequestHeaderPayload
+  "Delete a request header from a folder"
+  delete_folder_request_header(input: DeleteFolderRequestHeaderInput!): DeleteFolderRequestHeaderPayload
+  "Delete a request cookie from a folder"
+  delete_folder_request_cookie(input: DeleteFolderRequestCookieInput!): DeleteFolderRequestCookiePayload
+  "Updating an existing request cookie for a folder"
+  update_folder_request_cookie(input: UpdateFolderRequestCookieInput!): UpdateFolderRequestCookiePayload
+  "Updates information about the Slack authentication token and channels for use by Burp Suite DAST."
+  update_slack_settings(input: UpdateSlackSettingsInput!): UpdateSlackSettingsPayload
+  "Updates the GitLab connection URL and access token."
+  update_gitlab_settings(input: UpdateGitLabSettingsInput!): UpdateGitLabSettingsPayload
+  delete_gitlab_settings: Boolean
+  create_gitlab_issue(input: CreateGitLabIssueInput!): GitLabIssuePayload
+  link_gitlab_issue(input: LinkGitLabIssueInput!): GitLabNotePayload
+  unlink_gitlab_issue(input: UnlinkGitLabIssueInput!): Boolean
+  refresh_gitlab_issue(input: RefreshGitLabIssueInput!): Ticket
+  update_trello_settings(input: UpdateTrelloSettingsInput!): UpdateTrelloSettingsPayload
+  create_trello_card(input: CreateTrelloCardInput!): TrelloCardPayload
+  delete_trello_settings: Boolean
+  unlink_trello_card(input: UnlinkTrelloCardInput!): Boolean
+  link_trello_card(input: LinkTrelloCardInput!): TrelloLinkPayload
+  refresh_trello_card(input: RefreshTrelloCardInput!): Ticket
+  update_jira_credentials(input: JiraCredentialsInput!): UpdateJiraCredentialsPayload
+  delete_jira_settings: Boolean
+  create_jira_manual_rule(input: CreateJiraManualRuleInput!): JiraManualRulePayload
+  update_jira_manual_rule(input: UpdateJiraManualRuleInput!): JiraManualRulePayload
+  delete_jira_manual_rule(input: DeleteJiraManualRuleInput!): DeleteJiraManualRulePayload
+  create_jira_automatic_rule(input: CreateJiraAutomaticRuleInput!): JiraAutomaticRulePayload
+  update_jira_automatic_rule(input: UpdateJiraAutomaticRuleInput!): JiraAutomaticRulePayload
+  delete_jira_automatic_rule(input: DeleteJiraAutomaticRuleInput!): DeleteJiraAutomaticRulePayload
+  create_jira_ticket(input: CreateJiraTicketInput!): JiraTicketPayload
+  unlink_jira_ticket(input: UnlinkJiraTicketInput!): Boolean
+  link_jira_ticket(input: LinkJiraTicketInput!): Boolean
+  refresh_jira_ticket(input: RefreshJiraTicketInput!): Ticket
+  "Updates the Splunk integration settings.
+    
+Configures or updates the connection to a Splunk instance, enabling
+Burp Suite DAST to stream issues directly to Splunk for advanced analysis,
+real-time monitoring and event management."
+  update_splunk_enterprise_security_settings(input: UpdateSplunkEnterpriseSecuritySettingsInput!): UpdateSplunkEnterpriseSecuritySettingsPayload
+  "Removes the Splunk integration configuration.
+    
+Deletes all Splunk integration settings, disconnecting Burp Suite DAST from Splunk.
+After deletion, issues will no longer be streamed to Splunk.
+    
+Returns true if the settings were successfully deleted, false otherwise."
+  delete_splunk_enterprise_security_settings: Boolean
+  update_user_activity_log_settings(input: UpdateUserActivityLogSettingsInput!): UpdateUserActivityLogSettingsPayload
+  "Run a pre-scan check to confirm that the site is reachable."
+  create_pre_scan_check(
+    "The unique identifier of the site you want to create a pre-scan check."
+    input: ManagePreScanCheckInput!
+  ): CreatePreScanCheckPayload
+  "Cancels a pre-scan check."
+  cancel_pre_scan_check(
+    "The unique identifier of the site you want to cancel a pre-scan check for."
+    input: ManagePreScanCheckInput!
+  ): Boolean
+  increment_counter(input: IncrementCounterInput!): Boolean
+  record_questionnaire_answer(input: QuestionnaireAnswer!): Boolean
+  record_feedback_rating(input: FeedbackRating!): Boolean
+  "Adds an authentication token."
+  add_scanning_machine_authentication_token(input: AddScanningMachineAuthenticationTokenInput): AddScanningMachineAuthenticationTokenPayload
+  "Deletes an authentication token."
+  delete_scanning_machine_authentication_token(input: DeleteScanningMachineAuthenticationTokenInput): DeleteScanningMachineAuthenticationTokenPayload
+  "Renames an authentication token."
+  rename_scanning_machine_authentication_token(input: RenameScanningMachineAuthenticationTokenInput): RenameScanningMachineAuthenticationTokenPayload
+  "Uploads a new bcheck."
+  upload_bcheck(input: UploadBCheckInput!): UploadBCheckPayload
+  "Updates a new bcheck."
+  update_bcheck(input: UpdateBCheckInput!): UpdateBCheckPayload
+  "Upload a BCheck to replace an existing BCheck with the same name"
+  update_bcheck_by_name(input: UpdateBCheckByNameInput!): UpdateBCheckByNamePayload
+  "Remove a BCheck from the library and any sites it is assigned to."
+  delete_bcheck(input: DeleteBCheckInput!): DeleteBCheckPayload
+  "Updates the MFA settings for all users."
+  update_mfa_settings(input: UpdateMfaSettingsInput!): UpdateMfaSettings
+  "Resets the MFA secrets for a user"
+  reset_mfa_secret(input: ResetMfaSecretInput!): ResetMfaSecretPayload
+  "Resets the MFA backup codes for a user"
+  reset_mfa_backup_codes: ResetMfaBackupCodesPayload
+  "Update the forward propagation modes for issues"
+  update_forward_propagation_settings(input: UpdateForwardPropagationSettingsInput!): UpdateForwardPropagationSettingsPayload
+  "Update the project file storage path configuration."
+  update_project_file_storage_path(input: UpdateProjectFileStoragePathInput!): UpdateProjectFileStoragePathPayload
+  "Adds tags to nodes in the site tree. This can be used to add tags to sites and folders."
+  add_tags_to_nodes(input: AddTagsToNodesInput!): AddTagsToNodesPayload
+  "Remove tags from nodes in the site tree. This can be used to remove tags from sites and folders."
+  remove_tags_from_nodes(input: RemoveTagsFromNodesInput!): RemoveTagsFromNodesPayload
+  "Creates a new tag."
+  create_tag(input: CreateTagInput!): CreateTagPayload
+  "Updates an existing tag."
+  update_tag(input: UpdateTagInput!): UpdateTagPayload
+  "Deletes a tag."
+  delete_tag(input: DeleteTagInput!): DeleteTagPayload
+}
+
+type Subscription {
+  fetch_and_parse_api_definition_url(input: FetchAndParseApiDefinitionUrlInput!): FetchAndParseApiDefinitionUrlPayload
+}
+
+# ==============================================================================
+# SCHEMA DEFINITION
+# ==============================================================================
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
