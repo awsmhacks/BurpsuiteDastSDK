@@ -6,7 +6,7 @@ This module contains the main BurpSuiteClient class for interacting with the API
 
 import json
 import os
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Dict, Any, Union, Callable
 from dataclasses import asdict
 import requests
 
@@ -81,6 +81,191 @@ class BurpSuiteClient:
         
         if self.api_key:
             self._headers["Authorization"] = self.api_key
+        
+        # Cache for site name resolution
+        self._sites_cache: Optional[List[Dict[str, Any]]] = None
+        
+        # Debug mode
+        self.debug: bool = False
+        self._debug_callback: Optional[Callable[[str], None]] = None
+    
+    def set_debug_callback(self, callback: Optional[Callable[[str], None]]) -> None:
+        """Set a callback function for debug output."""
+        self._debug_callback = callback
+    
+    def _debug_log(self, message: str) -> None:
+        """Log a debug message if debug mode is enabled."""
+        if self.debug:
+            if self._debug_callback:
+                self._debug_callback(message)
+            else:
+                print(message)
+    
+    def _sanitize_headers(self, headers: Dict[str, str]) -> Dict[str, str]:
+        """Sanitize headers for debug output (hide sensitive data)."""
+        sanitized = headers.copy()
+        if "Authorization" in sanitized:
+            # Show only first 10 chars of API key
+            auth = sanitized["Authorization"]
+            if len(auth) > 10:
+                sanitized["Authorization"] = auth[:10] + "..." + "*" * 10
+        return sanitized
+    
+    def _refresh_sites_cache(self) -> None:
+        """Refresh the sites cache from the API."""
+        try:
+            tree = self.get_site_tree()
+            self._sites_cache = tree.get("sites", [])
+        except Exception:
+            self._sites_cache = []
+    
+    def _resolve_site_id(self, site_ref: str) -> str:
+        """
+        Resolve a site reference (ID or name) to a site ID.
+        
+        Args:
+            site_ref: Either a site ID or a site name.
+            
+        Returns:
+            The site ID.
+            
+        Note:
+            If the site_ref doesn't match any known site name, it's returned
+            as-is (assumed to be a valid site ID).
+        """
+        if not site_ref:
+            return site_ref
+        
+        site_ref = site_ref.strip()
+        # Strip surrounding quotes if present
+        if (site_ref.startswith('"') and site_ref.endswith('"')) or \
+           (site_ref.startswith("'") and site_ref.endswith("'")):
+            site_ref = site_ref[1:-1]
+        
+        # Refresh cache if empty
+        if self._sites_cache is None:
+            self._refresh_sites_cache()
+        
+        # Check by ID first
+        for site in self._sites_cache or []:
+            if site.get("id") == site_ref:
+                return site_ref
+        
+        # Check by name (case-insensitive)
+        for site in self._sites_cache or []:
+            if site.get("name", "").lower() == site_ref.lower():
+                return site.get("id")
+        
+        # If not found in cache, refresh and try again
+        self._refresh_sites_cache()
+        
+        for site in self._sites_cache or []:
+            if site.get("id") == site_ref:
+                return site_ref
+        
+        for site in self._sites_cache or []:
+            if site.get("name", "").lower() == site_ref.lower():
+                return site.get("id")
+        
+        # Not found - return the original (might be a valid ID not in cache)
+        return site_ref
+    
+    def _resolve_site_ids(self, site_refs: List[str]) -> List[str]:
+        """
+        Resolve a list of site references (IDs or names) to site IDs.
+        
+        Args:
+            site_refs: List of site IDs or site names.
+            
+        Returns:
+            List of site IDs.
+        """
+        return [self._resolve_site_id(ref) for ref in site_refs]
+    
+    def clear_sites_cache(self) -> None:
+        """Clear the sites cache. Call this after creating or deleting sites."""
+        self._sites_cache = None
+    
+    def _get_base_url(self) -> str:
+        """Get the base URL from the GraphQL endpoint URL."""
+        # Remove /graphql/v1 or similar suffix to get base URL
+        url = self.url
+        if '/graphql' in url:
+            url = url.split('/graphql')[0]
+        return url
+    
+    def _execute_rest(
+        self,
+        method: str,
+        endpoint: str,
+        params: Optional[Dict[str, Any]] = None,
+        data: Optional[Dict[str, Any]] = None
+    ) -> Any:
+        """
+        Execute a REST API request.
+        
+        Args:
+            method: HTTP method (GET, POST, etc.)
+            endpoint: API endpoint path (e.g., /api-internal/issues/node/123)
+            params: Query parameters
+            data: Request body data
+            
+        Returns:
+            The response data (JSON parsed).
+            
+        Raises:
+            NetworkError: If a network error occurs.
+            AuthenticationError: If authentication fails.
+        """
+        url = f"{self._get_base_url()}{endpoint}"
+        
+        # Debug: Log request
+        self._debug_log(f">>> REST {method} {url}")
+        self._debug_log(f">>> Headers: {self._sanitize_headers(self._headers)}")
+        if params:
+            self._debug_log(f">>> Params: {params}")
+        if data:
+            self._debug_log(f">>> Body: {json.dumps(data, indent=2)}")
+        
+        try:
+            response = requests.request(
+                method=method,
+                url=url,
+                params=params,
+                json=data,
+                headers=self._headers,
+                timeout=self.timeout,
+                verify=self.verify_ssl
+            )
+        except requests.exceptions.Timeout:
+            raise NetworkError("Request timed out", status_code=None)
+        except requests.exceptions.ConnectionError as e:
+            raise NetworkError(f"Connection error: {str(e)}", status_code=None)
+        except requests.exceptions.RequestException as e:
+            raise NetworkError(f"Request failed: {str(e)}", status_code=None)
+        
+        # Debug: Log response
+        self._debug_log(f"<<< Status: {response.status_code}")
+        self._debug_log(f"<<< Response: {response.text[:500]}{'...' if len(response.text) > 500 else ''}")
+        
+        if response.status_code == 401:
+            raise AuthenticationError("Authentication failed - invalid API key")
+        
+        if response.status_code == 403:
+            raise AuthenticationError("Access forbidden - insufficient permissions")
+        
+        if response.status_code >= 400:
+            raise NetworkError(
+                f"REST API request failed: {response.status_code}",
+                status_code=response.status_code,
+                response_body=response.text
+            )
+        
+        # Return JSON if available, otherwise return text
+        try:
+            return response.json()
+        except ValueError:
+            return response.text
     
     def _execute(
         self, 
@@ -110,6 +295,15 @@ class BurpSuiteClient:
         if operation_name:
             payload["operationName"] = operation_name
         
+        # Debug: Log request
+        self._debug_log(f">>> GraphQL POST {self.url}")
+        self._debug_log(f">>> Headers: {self._sanitize_headers(self._headers)}")
+        # Format query nicely for debug
+        query_preview = ' '.join(query.split())[:200]
+        self._debug_log(f">>> Query: {query_preview}...")
+        if variables:
+            self._debug_log(f">>> Variables: {json.dumps(variables, indent=2)}")
+        
         try:
             response = requests.post(
                 self.url,
@@ -124,6 +318,11 @@ class BurpSuiteClient:
             raise NetworkError(f"Connection error: {str(e)}", status_code=None)
         except requests.exceptions.RequestException as e:
             raise NetworkError(f"Request failed: {str(e)}", status_code=None)
+        
+        # Debug: Log response
+        self._debug_log(f"<<< Status: {response.status_code}")
+        response_preview = response.text[:500] if len(response.text) > 500 else response.text
+        self._debug_log(f"<<< Response: {response_preview}{'...' if len(response.text) > 500 else ''}")
         
         if response.status_code == 401:
             raise AuthenticationError("Authentication failed. Check your API key.")
@@ -369,7 +568,13 @@ class BurpSuiteClient:
         return result.get("site_tree", {})
     
     def get_site(self, site_id: str) -> Optional[Dict[str, Any]]:
-        """Get a site by ID."""
+        """
+        Get a site by ID or name.
+        
+        Args:
+            site_id: The site ID or site name.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         query = """
         query GetSite($id: ID!) {
             site(id: $id) {
@@ -392,7 +597,7 @@ class BurpSuiteClient:
             }
         }
         """
-        result = self._execute(query, {"id": site_id})
+        result = self._execute(query, {"id": resolved_id})
         return result.get("site")
     
     def create_site(
@@ -440,10 +645,18 @@ class BurpSuiteClient:
             variables["input"]["agent_pool_id"] = agent_pool_id
         
         result = self._execute(mutation, variables)
+        # Clear cache since we created a new site
+        self.clear_sites_cache()
         return result.get("create_site", {})
     
     def delete_site(self, site_id: str) -> Optional[str]:
-        """Delete a site."""
+        """
+        Delete a site.
+        
+        Args:
+            site_id: The site ID or site name.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         mutation = """
         mutation DeleteSite($input: DeleteSiteInput!) {
             delete_site(input: $input) {
@@ -451,11 +664,20 @@ class BurpSuiteClient:
             }
         }
         """
-        result = self._execute(mutation, {"input": {"id": site_id}})
+        result = self._execute(mutation, {"input": {"id": resolved_id}})
+        # Clear cache since we deleted a site
+        self.clear_sites_cache()
         return result.get("delete_site", {}).get("id")
     
     def rename_site(self, site_id: str, name: str) -> Dict[str, Any]:
-        """Rename a site."""
+        """
+        Rename a site.
+        
+        Args:
+            site_id: The site ID or site name.
+            name: The new name for the site.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         mutation = """
         mutation RenameSite($input: RenameSiteInput!) {
             rename_site(input: $input) {
@@ -463,11 +685,20 @@ class BurpSuiteClient:
             }
         }
         """
-        result = self._execute(mutation, {"input": {"id": site_id, "name": name}})
+        result = self._execute(mutation, {"input": {"id": resolved_id, "name": name}})
+        # Clear cache since name changed
+        self.clear_sites_cache()
         return result.get("rename_site", {})
     
     def move_site(self, site_id: str, parent_id: str) -> Dict[str, Any]:
-        """Move a site to a different folder."""
+        """
+        Move a site to a different folder.
+        
+        Args:
+            site_id: The site ID or site name.
+            parent_id: The parent folder ID.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         mutation = """
         mutation MoveSite($input: MoveSiteInput!) {
             move_site(input: $input) {
@@ -476,7 +707,7 @@ class BurpSuiteClient:
         }
         """
         result = self._execute(mutation, {
-            "input": {"site_id": site_id, "parent_id": parent_id}
+            "input": {"site_id": resolved_id, "parent_id": parent_id}
         })
         return result.get("move_site", {})
     
@@ -489,7 +720,18 @@ class BurpSuiteClient:
         protocol_options: ScopeProtocolOptions = ScopeProtocolOptions.USE_SPECIFIED_PROTOCOLS,
         confirm_permission_to_scan: bool = True
     ) -> Dict[str, Any]:
-        """Update a site's scope."""
+        """
+        Update a site's scope.
+        
+        Args:
+            site_id: The site ID or site name.
+            start_urls: List of URLs to start scanning from.
+            in_scope_url_prefixes: List of URL prefixes to include in scope.
+            out_of_scope_url_prefixes: List of URL prefixes to exclude from scope.
+            protocol_options: Protocol options for scanning.
+            confirm_permission_to_scan: Confirm permission to scan.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         mutation = """
         mutation UpdateSiteScopeV2($input: UpdateSiteScopeV2Input!) {
             update_site_scope_v2(input: $input) {
@@ -502,7 +744,7 @@ class BurpSuiteClient:
         """
         result = self._execute(mutation, {
             "input": {
-                "site_id": site_id,
+                "site_id": resolved_id,
                 "scope_v2": {
                     "start_urls": start_urls,
                     "in_scope_url_prefixes": in_scope_url_prefixes or [],
@@ -519,7 +761,14 @@ class BurpSuiteClient:
         site_id: str, 
         scan_configuration_ids: List[str]
     ) -> Dict[str, Any]:
-        """Update scan configurations for a site."""
+        """
+        Update scan configurations for a site.
+        
+        Args:
+            site_id: The site ID or site name.
+            scan_configuration_ids: List of scan configuration IDs.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         mutation = """
         mutation UpdateSiteScanConfigurations($input: UpdateSiteScanConfigurationsInput!) {
             update_site_scan_configurations(input: $input) {
@@ -528,9 +777,36 @@ class BurpSuiteClient:
         }
         """
         result = self._execute(mutation, {
-            "input": {"id": site_id, "scan_configuration_ids": scan_configuration_ids}
+            "input": {"id": resolved_id, "scan_configuration_ids": scan_configuration_ids}
         })
         return result.get("update_site_scan_configurations", {})
+    
+    def get_site_issues(self, site_id: str) -> List[Dict[str, Any]]:
+        """
+        Get all issues for a site.
+        
+        This uses the REST API endpoint instead of GraphQL.
+        
+        Args:
+            site_id: The site ID or site name.
+            
+        Returns:
+            List of aggregated issue type summaries for the site.
+        """
+        resolved_id = self._resolve_site_id(site_id)
+        endpoint = f"/api-internal/issues/node/{resolved_id}"
+        result = self._execute_rest("GET", endpoint)
+        
+        # Return the issues list - the API returns them in 'aggregated_issue_type_summaries'
+        if isinstance(result, list):
+            return result
+        elif isinstance(result, dict):
+            # Try known field names in order of likelihood
+            return (result.get("aggregated_issue_type_summaries") or 
+                    result.get("issues") or 
+                    result.get("data") or 
+                    [])
+        return []
     
     # =========================================================================
     # FOLDER OPERATIONS
@@ -666,7 +942,18 @@ class BurpSuiteClient:
         site_id: Optional[str] = None,
         schedule_item_id: Optional[str] = None
     ) -> List[Dict[str, Any]]:
-        """Get a list of scans."""
+        """
+        Get a list of scans.
+        
+        Args:
+            offset: Pagination offset.
+            limit: Maximum number of scans to return.
+            sort_column: Column to sort by.
+            sort_order: Sort order (ASC or DESC).
+            scan_status: Filter by scan status.
+            site_id: Filter by site ID or site name.
+            schedule_item_id: Filter by schedule item ID.
+        """
         query = """
         query GetScans(
             $offset: Int, $limit: Int, $sort_column: ScansSortColumn, 
@@ -694,7 +981,7 @@ class BurpSuiteClient:
         if scan_status:
             variables["scan_status"] = [s.value for s in scan_status]
         if site_id:
-            variables["scan_target_id"] = site_id
+            variables["scan_target_id"] = self._resolve_site_id(site_id)
         if schedule_item_id:
             variables["schedule_item_id"] = schedule_item_id
         
@@ -873,7 +1160,19 @@ class BurpSuiteClient:
         scan_configuration_ids: Optional[List[str]] = None,
         verbose_debug: bool = False
     ) -> Dict[str, Any]:
-        """Create a schedule item."""
+        """
+        Create a schedule item.
+        
+        Args:
+            site_ids: List of site IDs or site names to scan.
+            folder_ids: List of folder IDs to scan.
+            initial_run_time: ISO 8601 datetime for when to start.
+            rrule: Recurrence rule for recurring scans.
+            name: Name for the schedule.
+            description: Description for the schedule.
+            scan_configuration_ids: List of scan configuration IDs.
+            verbose_debug: Enable verbose debug logging.
+        """
         mutation = """
         mutation CreateScheduleItem($input: CreateScheduleItemInput!) {
             create_schedule_item(input: $input) {
@@ -888,7 +1187,7 @@ class BurpSuiteClient:
         variables = {"input": {"verbose_debug": verbose_debug}}
         
         if site_ids:
-            variables["input"]["site_ids"] = site_ids
+            variables["input"]["site_ids"] = self._resolve_site_ids(site_ids)
         if folder_ids:
             variables["input"]["folder_ids"] = folder_ids
         if scan_configuration_ids:
@@ -1008,6 +1307,48 @@ class BurpSuiteClient:
         
         result = self._execute(query, variables)
         return result.get("scan", {}).get("issues", [])
+    
+    def get_all_scan_issues(
+        self,
+        scan_id: str,
+        severities: Optional[List[Severity]] = None,
+        confidences: Optional[List[Confidence]] = None,
+        novelties: Optional[List[Novelty]] = None,
+        batch_size: int = 500
+    ) -> List[Dict[str, Any]]:
+        """
+        Get ALL issues for a scan using pagination.
+        
+        Args:
+            scan_id: The scan ID.
+            severities: Filter by severity levels.
+            confidences: Filter by confidence levels.
+            novelties: Filter by novelty.
+            batch_size: Number of issues to fetch per request.
+            
+        Returns:
+            List of all issues for the scan.
+        """
+        all_issues = []
+        start = 0
+        
+        while True:
+            batch = self.get_scan_issues(
+                scan_id=scan_id,
+                start=start,
+                count=batch_size,
+                severities=severities,
+                confidences=confidences,
+                novelties=novelties
+            )
+            if not batch:
+                break
+            all_issues.extend(batch)
+            start += len(batch)
+            if len(batch) < batch_size:
+                break
+        
+        return all_issues
     
     def update_issue(
         self,
@@ -1431,7 +1772,13 @@ class BurpSuiteClient:
     # =========================================================================
     
     def get_pre_scan_check(self, site_id: str) -> Optional[Dict[str, Any]]:
-        """Get pre-scan check results for a site."""
+        """
+        Get pre-scan check results for a site.
+        
+        Args:
+            site_id: The site ID or site name.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         query = """
         query GetPreScanCheck($site_id: ID!) {
             pre_scan_check(site_id: $site_id) {
@@ -1445,11 +1792,17 @@ class BurpSuiteClient:
             }
         }
         """
-        result = self._execute(query, {"site_id": site_id})
+        result = self._execute(query, {"site_id": resolved_id})
         return result.get("pre_scan_check")
     
     def create_pre_scan_check(self, site_id: str) -> Dict[str, Any]:
-        """Create a pre-scan check for a site."""
+        """
+        Create a pre-scan check for a site.
+        
+        Args:
+            site_id: The site ID or site name.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         mutation = """
         mutation CreatePreScanCheck($input: ManagePreScanCheckInput!) {
             create_pre_scan_check(input: $input) {
@@ -1457,17 +1810,23 @@ class BurpSuiteClient:
             }
         }
         """
-        result = self._execute(mutation, {"input": {"site_id": site_id}})
+        result = self._execute(mutation, {"input": {"site_id": resolved_id}})
         return result.get("create_pre_scan_check", {})
     
     def cancel_pre_scan_check(self, site_id: str) -> Optional[bool]:
-        """Cancel a pre-scan check."""
+        """
+        Cancel a pre-scan check.
+        
+        Args:
+            site_id: The site ID or site name.
+        """
+        resolved_id = self._resolve_site_id(site_id)
         mutation = """
         mutation CancelPreScanCheck($input: ManagePreScanCheckInput!) {
             cancel_pre_scan_check(input: $input)
         }
         """
-        result = self._execute(mutation, {"input": {"site_id": site_id}})
+        result = self._execute(mutation, {"input": {"site_id": resolved_id}})
         return result.get("cancel_pre_scan_check")
     
     # =========================================================================
